@@ -230,6 +230,7 @@
             <li><a href="#" data-page="simulator"><i class="fas fa-vials"></i> Risk Simulator</a></li>
             <li><a href="#" data-page="batch"><i class="fas fa-layer-group"></i> Batch Analysis</a></li>
             <li><a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+            <li><a href="#" data-page="modelhealth"><i class="fas fa-heartbeat"></i> Model Health</a></li>
             <li><a href="#" data-page="reports"><i class="fas fa-file-alt"></i> Reports</a></li>
             <li class="mt-5"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
@@ -483,6 +484,47 @@
             </div>
         </div>
 
+        <div id="page-modelhealth" class="page-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5>Placement Model Performance</h5></div>
+                        <div class="card-body">
+                            <div style="height: 350px;"><canvas id="chart-model-perf"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header"><h5>Bias Analysis (Average Risk)</h5></div>
+                        <div class="card-body">
+                            <div style="height: 350px;"><canvas id="chart-bias-risk"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h5>AI Fairness Assessment</h5></div>
+                <div class="card-body">
+                    <div id="fairness-summary" class="alert alert-info">
+                        <i class="fas fa-robot me-2"></i> Analyzing historical predictions for algorithmic parity...
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <h6>System Accuracy</h6>
+                            <p class="text-muted small">Based on latest training metrics registered in the database.</p>
+                            <h2 id="health-accuracy">--</h2>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Bias Score</h6>
+                            <p class="text-muted small">Variance in risk assessment across different cohorts.</p>
+                            <h2 id="health-bias">--</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="page-reports" class="page-section">
             <div class="card">
                 <div class="card-header"><h5>Generate Reports</h5></div>
@@ -634,6 +676,7 @@
                 simulator: 'Risk Simulator',
                 batch: 'Batch Analysis', 
                 analytics: 'Analytics', 
+                modelhealth: 'Model Health',
                 reports: 'Reports'
             };
             document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
@@ -642,6 +685,102 @@
             if (page === 'portfolio') loadPortfolio();
             if (page === 'analytics') loadAnalytics();
             if (page === 'simulator') loadSimulator();
+            if (page === 'modelhealth') loadModelHealth();
+        }
+
+        // --- Model Health Logic ---
+
+        async function loadModelHealth() {
+            try {
+                // 1. Fetch Performance Metrics
+                const perfRes = await authFetch('/api/v1/analytics/model-performance');
+                const perfData = await perfRes.json();
+                
+                if (perfData && !perfData.error) {
+                    const metrics = perfData.placement_model || {};
+                    document.getElementById('health-accuracy').textContent = (metrics.accuracy * 100).toFixed(1) + '%';
+                    
+                    const ctx = document.getElementById('chart-model-perf').getContext('2d');
+                    if (charts.modelPerf) charts.modelPerf.destroy();
+                    
+                    const labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score'];
+                    const values = [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1_score];
+                    
+                    charts.modelPerf = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Placement Model (6m)',
+                                data: values,
+                                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                                borderColor: 'rgba(79, 70, 229, 1)',
+                                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: { beginAtZero: true, max: 1, ticks: { display: false } }
+                            }
+                        }
+                    });
+                }
+
+                // 2. Fetch Bias Analysis
+                const biasRes = await authFetch('/api/v1/analytics/bias-check');
+                const biasData = await biasRes.json();
+                
+                if (biasData && !biasData.error) {
+                    const courseData = biasData.by_course || {};
+                    const ctxBias = document.getElementById('chart-bias-risk').getContext('2d');
+                    if (charts.biasRisk) charts.biasRisk.destroy();
+                    
+                    const labels = Object.keys(courseData);
+                    const avgRisks = labels.map(l => courseData[l].avg_risk);
+                    
+                    charts.biasRisk = new Chart(ctxBias, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Average Risk Score',
+                                data: avgRisks,
+                                backgroundColor: '#4f46e5',
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true, max: 1, title: { display: true, text: 'Risk Score (0-1)' } }
+                            }
+                        }
+                    });
+                    
+                    // Fairness Summary Logic
+                    let maxDiff = 0;
+                    if (avgRisks.length > 1) {
+                        maxDiff = Math.max(...avgRisks) - Math.min(...avgRisks);
+                    }
+                    
+                    document.getElementById('health-bias').textContent = maxDiff.toFixed(2);
+                    const summaryElem = document.getElementById('fairness-summary');
+                    
+                    if (maxDiff < 0.15) {
+                        summaryElem.className = "alert alert-success";
+                        summaryElem.innerHTML = '<i class="fas fa-check-circle me-2"></i> <strong>Fairness Pass:</strong> Algorithmic parity is high. Risk scores are consistently distributed across cohorts.';
+                    } else {
+                        summaryElem.className = "alert alert-warning";
+                        summaryElem.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> <strong>Fairness Alert:</strong> Significant variance detected in risk scores between cohorts. Manual audit recommended.';
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading model health:", err);
+            }
         }
 
         // --- Simulator Logic ---
@@ -1217,6 +1356,29 @@
             probElem.className = deltaProb > 0 ? 'text-success fw-bold' : 'text-danger fw-bold';
         }
 
+        async function downloadReport(studentId) {
+            console.log("Downloading report for student:", studentId);
+            try {
+                const response = await authFetch(`/api/v1/portfolio/${studentId}/report`);
+                if (!response.ok) {
+                    throw new Error('Failed to generate report');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RiskReport_${studentId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (err) {
+                console.error("Download error:", err);
+                alert("Could not download report: " + err.message);
+            }
+        }
+
         function displayPrediction(result) {
             const div = document.getElementById('prediction-result');
             const content = document.getElementById('prediction-result-content');
@@ -1231,6 +1393,12 @@
             const isAI = recs.is_ai_generated;
 
             content.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Risk Profile Analysis</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="downloadReport('${result.student_id}')">
+                        <i class="fas fa-file-pdf me-1"></i> Download PDF Report
+                    </button>
+                </div>
                 <div class="row">
                     <div class="col-md-6">
                         <h6>Placement Prediction</h6>

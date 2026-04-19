@@ -2,7 +2,7 @@
 API routes for the placement-risk modeling system (Database-Driven)
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from typing import List, Dict
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -21,6 +21,7 @@ from app.schemas.prediction import (
     Recommendation
 )
 from app.services.prediction_service import PredictionService
+from app.services.report_generator import ReportGenerator
 from app.core.config import settings
 from app.api.deps import get_current_user
 from app.db.session import get_db
@@ -176,6 +177,79 @@ async def simulate_impact(
         raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")
 
 
+from app.services.report_generator import ReportGenerator
+from fastapi.responses import Response
+
+@router.get("/portfolio/{student_id}/report")
+async def get_student_report(
+    student_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Generate and return a professional PDF report for a specific student"""
+    tenant_id = current_user["tenant_id"]
+    print(f"DEBUG: Generating report for ID: {student_id}")
+    
+    try:
+        # Fetch from DB
+        profile = db.query(StudentProfile).filter(
+            StudentProfile.student_id == student_id,
+            StudentProfile.tenant_id == tenant_id
+        ).first()
+        
+        if not profile:
+            print(f"DEBUG: Profile not found for {student_id}")
+            raise HTTPException(status_code=404, detail="Student not found in your portfolio")
+            
+        latest_pred = db.query(PredictionResult).filter(
+            PredictionResult.student_profile_id == profile.id
+        ).order_by(PredictionResult.created_at.desc()).first()
+        
+        if not latest_pred:
+            print(f"DEBUG: No predictions found for profile {profile.id}")
+            raise HTTPException(status_code=404, detail="No predictions found for this student")
+
+        # Helper to ensure dict
+        def to_dict(data):
+            if isinstance(data, str):
+                import json
+                return json.loads(data)
+            return data
+
+        # Combine data for generator
+        data = {
+            "student_id": profile.student_id,
+            "academic": to_dict(profile.academic_data),
+            "institute": to_dict(profile.institute_data),
+            "labor_market": to_dict(profile.labor_market_data),
+            "real_time_signals": to_dict(profile.real_time_signals),
+            "prediction": to_dict(latest_pred.full_prediction)
+        }
+        
+        print("DEBUG: Calling ReportGenerator.generate()...")
+        generator = ReportGenerator(data)
+        pdf_bytes = generator.generate()
+        
+        # Ensure we return bytes (fpdf2 might return bytearray)
+        content = bytes(pdf_bytes)
+        
+        print(f"DEBUG: PDF generated successfully, size: {len(content)} bytes")
+        
+        return Response(
+            content=content,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="CreditMemo_{student_id}.pdf"',
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        import traceback
+        error_msg = f"Report Error: {str(e)}"
+        print(f"ERROR: {error_msg}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=error_msg)
+
 @router.get("/model-info")
 async def get_model_info(db: Session = Depends(get_db)):
     """Get information about the loaded models and registry from DB"""
@@ -296,6 +370,66 @@ async def get_portfolio_stats(
         "portfolio_health_score": round(1 - avg_risk, 3)
     }
 
+
+@router.get("/analytics/model-performance")
+async def get_model_performance(db: Session = Depends(get_db)):
+    """Get the latest model performance metrics from the registry"""
+    latest = db.query(ModelRegistry).filter(ModelRegistry.is_active == True).order_by(ModelRegistry.trained_at.desc()).first()
+    if not latest:
+        return {"error": "No trained model found"}
+    
+    return latest.metrics
+
+@router.get("/analytics/bias-check")
+async def get_bias_check(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Perform algorithmic bias analysis across different cohorts"""
+    tenant_id = current_user["tenant_id"]
+    
+    results = db.query(StudentProfile, PredictionResult).join(
+        PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
+    ).filter(StudentProfile.tenant_id == tenant_id).all()
+    
+    if not results:
+        return {"error": "Insufficient data for bias analysis"}
+    
+    analysis = {
+        "by_course": {},
+        "by_tier": {}
+    }
+    
+    # Process Course Bias
+    for profile, pred in results:
+        course = profile.academic_data.get('course_type', 'Other')
+        tier = profile.institute_data.get('institute_tier', 'Other')
+        
+        # Course aggregation
+        if course not in analysis["by_course"]:
+            analysis["by_course"][course] = {"total": 0, "sum_risk": 0, "high_risk_count": 0}
+        
+        analysis["by_course"][course]["total"] += 1
+        analysis["by_course"][course]["sum_risk"] += pred.placement_risk_score
+        if pred.risk_level == "High":
+            analysis["by_course"][course]["high_risk_count"] += 1
+            
+        # Tier aggregation
+        if tier not in analysis["by_tier"]:
+            analysis["by_tier"][tier] = {"total": 0, "sum_risk": 0, "high_risk_count": 0}
+            
+        analysis["by_tier"][tier]["total"] += 1
+        analysis["by_tier"][tier]["sum_risk"] += pred.placement_risk_score
+        if pred.risk_level == "High":
+            analysis["by_tier"][tier]["high_risk_count"] += 1
+            
+    # Calculate Averages
+    for category in ["by_course", "by_tier"]:
+        for group, stats in analysis[category].items():
+            stats["avg_risk"] = round(stats["sum_risk"] / stats["total"], 3)
+            stats["high_risk_rate"] = round(stats["high_risk_count"] / stats["total"], 3)
+            
+    return analysis
 
 @router.get("/analytics/risk-by-course")
 async def analytics_risk_by_course(
