@@ -15,6 +15,8 @@ class Settings:
     # Data and Model paths
     MODEL_DIR = "models"
     DATA_DIR = "data"
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./placement_risk.db"
+    
     PLACEMENT_MODEL_PATH = "models/placement_model.pkl"
     SALARY_MODEL_PATH = "models/salary_model.pkl"
     SCALER_PATH = "models/scaler.pkl"

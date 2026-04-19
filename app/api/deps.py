@@ -1,25 +1,17 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
+from sqlalchemy.orm import Session
 from app.core.security import SECRET_KEY, ALGORITHM
+from app.db.session import get_db
+from app.db.models import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
-# Hardcoded users for demonstration
-USERS_DB = {
-    "lender_a": {
-        "username": "lender_a",
-        "hashed_password": "$2b$12$6uXySlyuS/E9O2eWf3uG/.5D7H3i6Q7.K1N3/1z9t9W9i9i9i9i9i", # "password123"
-        "tenant_id": "tenant_a"
-    },
-    "lender_b": {
-        "username": "lender_b",
-        "hashed_password": "$2b$12$6uXySlyuS/E9O2eWf3uG/.5D7H3i6Q7.K1N3/1z9t9W9i9i9i9i9i", # "password123"
-        "tenant_id": "tenant_b"
-    }
-}
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -33,7 +25,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
         
-    user = USERS_DB.get(username)
+    user = db.query(User).filter(User.username == username).first()
     if user is None:
         raise credentials_exception
-    return user
+    
+    # Return as dict for backward compatibility with current routes
+    return {
+        "id": user.id,
+        "username": user.username,
+        "tenant_id": user.tenant_id
+    }

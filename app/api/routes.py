@@ -1,12 +1,12 @@
 """
-API routes for the placement-risk modeling system
+API routes for the placement-risk modeling system (Database-Driven)
 """
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Dict
 from datetime import datetime
-import json
-import os
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.schemas.prediction import (
     StudentPredictionRequest,
@@ -14,122 +14,125 @@ from app.schemas.prediction import (
     BatchPredictionRequest,
     BatchPredictionResponse,
     SimulationRequest,
-    SimulationResponse
+    SimulationResponse,
+    PlacementPrediction,
+    SalaryPrediction,
+    RiskAssessment,
+    Recommendation
 )
 from app.services.prediction_service import PredictionService
 from app.core.config import settings
 from app.api.deps import get_current_user
+from app.db.session import get_db
+from app.db.models import User, StudentProfile, PredictionResult, ModelRegistry
 
 router = APIRouter()
 
 # Initialize prediction service
 prediction_service = PredictionService()
 
-# Portfolio store with tenant isolation: {"tenant_id": {"student_id": data}}
-portfolio_store: Dict[str, Dict[str, dict]] = {}
-
-# Portfolio persistence helper
-def save_portfolio():
-    """Save portfolio store to file"""
-    try:
-        os.makedirs(os.path.dirname(settings.PORTFOLIO_PATH), exist_ok=True)
-        with open(settings.PORTFOLIO_PATH, "w") as f:
-            json.dump(portfolio_store, f)
-    except Exception as e:
-        print(f"Error saving portfolio: {e}")
-
-def load_portfolio():
-    """Load portfolio store from file"""
-    global portfolio_store
-    if os.path.exists(settings.PORTFOLIO_PATH):
-        try:
-            with open(settings.PORTFOLIO_PATH, "r") as f:
-                portfolio_store = json.load(f)
-        except Exception as e:
-            print(f"Error loading portfolio: {e}")
-            portfolio_store = {}
-    else:
-        portfolio_store = {}
-
-# Initialize portfolio storage
-load_portfolio()
-
 
 @router.post("/predict", response_model=StudentPredictionResponse)
 async def predict_placement(
     request: StudentPredictionRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """
-    Predict placement timeline, salary, and risk for a single student
+    Predict placement timeline, salary, and risk for a single student and save to DB
     """
     tenant_id = current_user["tenant_id"]
     try:
         response = prediction_service.predict_single(request)
         
-        # Store in tenant's portfolio with FULL data for simulator
-        if tenant_id not in portfolio_store:
-            portfolio_store[tenant_id] = {}
-            
-        portfolio_store[tenant_id][request.student_id] = {
-            "student_id": request.student_id,
-            "academic": request.academic.model_dump(),
-            "institute": request.institute.model_dump(),
-            "labor_market": request.labor_market.model_dump(),
-            "real_time_signals": request.real_time_signals.model_dump() if request.real_time_signals else {},
-            "prediction": response.model_dump(),
-            "timestamp": datetime.now().isoformat()
-        }
-        save_portfolio()
+        # 1. Save Student Profile
+        student = StudentProfile(
+            student_id=request.student_id,
+            tenant_id=tenant_id,
+            academic_data=request.academic.model_dump(),
+            institute_data=request.institute.model_dump(),
+            labor_market_data=request.labor_market.model_dump(),
+            real_time_signals=request.real_time_signals.model_dump() if request.real_time_signals else {}
+        )
+        db.add(student)
+        db.flush() # Get student ID
+        
+        # 2. Save Prediction Result
+        prediction = PredictionResult(
+            student_profile_id=student.id,
+            lender_id=current_user["id"],
+            tenant_id=tenant_id,
+            placement_risk_score=response.risk_assessment.placement_risk_score,
+            risk_level=response.risk_assessment.risk_level.value,
+            predicted_timeline=response.placement_prediction.predicted_timeline,
+            expected_salary_avg=response.salary_prediction.expected_salary_avg,
+            full_prediction=response.model_dump()
+        )
+        db.add(prediction)
+        db.commit()
+        
         return response
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
 
 @router.post("/batch-predict", response_model=BatchPredictionResponse)
 async def batch_predict(
     request: BatchPredictionRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """
-    Predict placements for multiple students in batch
+    Predict placements for multiple students in batch and save to DB
     """
     tenant_id = current_user["tenant_id"]
     try:
         students = request.students[:request.max_batch_size]
         results = prediction_service.predict_batch(students)
         
-        # Store in tenant's portfolio
-        if tenant_id not in portfolio_store:
-            portfolio_store[tenant_id] = {}
-            
-        # Map requests to results to save full profiles
         results_map = {r.student_id: r for r in results}
+        
         for stu_req in students:
             if stu_req.student_id in results_map:
                 res = results_map[stu_req.student_id]
-                portfolio_store[tenant_id][stu_req.student_id] = {
-                    "student_id": stu_req.student_id,
-                    "academic": stu_req.academic.model_dump(),
-                    "institute": stu_req.institute.model_dump(),
-                    "labor_market": stu_req.labor_market.model_dump(),
-                    "real_time_signals": stu_req.real_time_signals.model_dump() if stu_req.real_time_signals else {},
-                    "prediction": res.model_dump(),
-                    "timestamp": datetime.now().isoformat()
-                }
+                
+                # Save Profile
+                student = StudentProfile(
+                    student_id=stu_req.student_id,
+                    tenant_id=tenant_id,
+                    academic_data=stu_req.academic.model_dump(),
+                    institute_data=stu_req.institute.model_dump(),
+                    labor_market_data=stu_req.labor_market.model_dump(),
+                    real_time_signals=stu_req.real_time_signals.model_dump() if stu_req.real_time_signals else {}
+                )
+                db.add(student)
+                db.flush()
+                
+                # Save Prediction
+                prediction = PredictionResult(
+                    student_profile_id=student.id,
+                    lender_id=current_user["id"],
+                    tenant_id=tenant_id,
+                    placement_risk_score=res.risk_assessment.placement_risk_score,
+                    risk_level=res.risk_assessment.risk_level.value,
+                    predicted_timeline=res.placement_prediction.predicted_timeline,
+                    expected_salary_avg=res.salary_prediction.expected_salary_avg,
+                    full_prediction=res.model_dump()
+                )
+                db.add(prediction)
         
-        save_portfolio()
+        db.commit()
         
-        response = BatchPredictionResponse(
+        return BatchPredictionResponse(
             total_requests=len(students),
             successful_predictions=len(results),
             failed_predictions=len(students) - len(results),
             results=results,
             errors=None
         )
-        
-        return response
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=f"Batch prediction failed: {str(e)}")
 
 
@@ -139,16 +142,12 @@ async def simulate_impact(
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Simulate what-if scenarios
+    Simulate what-if scenarios (Transient, not saved to DB)
     """
     try:
-        # Get base prediction
         original = prediction_service.predict_single(request.base_data)
-        
-        # Get simulated prediction
         simulated = prediction_service.simulate(request.base_data, request.modifications)
         
-        # Calculate impact
         delta_risk = simulated.risk_assessment.placement_risk_score - original.risk_assessment.placement_risk_score
         delta_prob = simulated.placement_prediction.probability_6_months - original.placement_prediction.probability_6_months
         
@@ -178,13 +177,18 @@ async def simulate_impact(
 
 
 @router.get("/model-info")
-async def get_model_info():
-    """Get information about the loaded models and registry"""
-    registry_path = "models/registry.json"
+async def get_model_info(db: Session = Depends(get_db)):
+    """Get information about the loaded models and registry from DB"""
+    latest_registry = db.query(ModelRegistry).filter(ModelRegistry.is_active == True).order_by(ModelRegistry.trained_at.desc()).first()
+    
     registry_data = {}
-    if os.path.exists(registry_path):
-        with open(registry_path, 'r') as f:
-            registry_data = json.load(f)
+    if latest_registry:
+        registry_data = {
+            "version": latest_registry.version,
+            "trained_at": latest_registry.trained_at.isoformat(),
+            "metrics": latest_registry.metrics,
+            "feature_count": latest_registry.feature_count
+        }
             
     return {
         "model_version": settings.APP_VERSION,
@@ -212,135 +216,139 @@ async def health_check():
     }
 
 
-# Portfolio Management Endpoints (Tenant-Aware)
+# Portfolio Management Endpoints (Tenant-Aware & DB-Powered)
 
 @router.get("/portfolio")
-async def get_portfolio(current_user: dict = Depends(get_current_user)):
-    """Get all students in portfolio for current tenant"""
+async def get_portfolio(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get all students in portfolio for current tenant from DB"""
     tenant_id = current_user["tenant_id"]
-    tenant_portfolio = portfolio_store.get(tenant_id, {})
+    
+    # Query joined profiles and predictions
+    results = db.query(StudentProfile, PredictionResult).join(
+        PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
+    ).filter(StudentProfile.tenant_id == tenant_id).all()
+    
+    students = []
+    for profile, pred in results:
+        students.append({
+            "student_id": profile.student_id,
+            "academic": profile.academic_data,
+            "institute": profile.institute_data,
+            "labor_market": profile.labor_market_data,
+            "real_time_signals": profile.real_time_signals,
+            "prediction": pred.full_prediction,
+            "timestamp": pred.created_at.isoformat()
+        })
+        
     return {
-        "total_students": len(tenant_portfolio),
-        "students": list(tenant_portfolio.values())
+        "total_students": len(students),
+        "students": students
     }
 
 
 @router.get("/portfolio/stats")
-async def get_portfolio_stats(current_user: dict = Depends(get_current_user)):
-    """Get portfolio statistics for current tenant"""
+async def get_portfolio_stats(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get portfolio statistics using SQL aggregations"""
     tenant_id = current_user["tenant_id"]
-    tenant_portfolio = portfolio_store.get(tenant_id, {})
     
-    if not tenant_portfolio:
+    # Total count
+    total = db.query(PredictionResult).filter(PredictionResult.tenant_id == tenant_id).count()
+    
+    if total == 0:
         return {
             "total_students": 0,
             "risk_distribution": {"Low": 0, "Medium": 0, "High": 0},
             "average_risk_score": 0,
             "average_salary": 0,
-            "timeline_distribution": {},
-            "portfolio_health_score": 0
+            "portfolio_health_score": 1.0
         }
     
-    students = list(tenant_portfolio.values())
+    # Risk Distribution
+    risk_counts = db.query(
+        PredictionResult.risk_level, func.count(PredictionResult.id)
+    ).filter(PredictionResult.tenant_id == tenant_id).group_by(PredictionResult.risk_level).all()
     
-    # Risk distribution
     risk_dist = {"Low": 0, "Medium": 0, "High": 0}
-    for s in students:
-        pred = s.get('prediction', {})
-        risk_assessment = pred.get('risk_assessment', {})
-        risk_level = risk_assessment.get('risk_level')
-        if risk_level in risk_dist:
-            risk_dist[risk_level] += 1
+    for level, count in risk_counts:
+        if level in risk_dist:
+            risk_dist[level] = count
+            
+    # Average Stats
+    avg_stats = db.query(
+        func.avg(PredictionResult.placement_risk_score),
+        func.avg(PredictionResult.expected_salary_avg)
+    ).filter(PredictionResult.tenant_id == tenant_id).first()
     
-    # Average risk score
-    risk_scores = []
-    salaries = []
-    timelines = []
-    
-    for s in students:
-        pred = s.get('prediction', {})
-        risk_assessment = pred.get('risk_assessment', {})
-        salary_pred = pred.get('salary_prediction', {})
-        placement_pred = pred.get('placement_prediction', {})
-        
-        if 'placement_risk_score' in risk_assessment:
-            risk_scores.append(risk_assessment['placement_risk_score'])
-        if 'expected_salary_avg' in salary_pred:
-            salaries.append(salary_pred['expected_salary_avg'])
-        if 'predicted_timeline' in placement_pred:
-            timelines.append(placement_pred['predicted_timeline'])
-    
-    avg_risk = sum(risk_scores) / len(risk_scores) if risk_scores else 0
-    avg_salary = sum(salaries) / len(salaries) if salaries else 0
-    
-    from collections import Counter
-    timeline_dist = dict(Counter(timelines))
+    avg_risk = avg_stats[0] or 0
+    avg_salary = avg_stats[1] or 0
     
     return {
-        "total_students": len(students),
+        "total_students": total,
         "risk_distribution": risk_dist,
         "average_risk_score": round(avg_risk, 3),
         "average_salary": round(avg_salary, 2),
-        "timeline_distribution": timeline_dist,
         "portfolio_health_score": round(1 - avg_risk, 3)
     }
 
 
 @router.get("/analytics/risk-by-course")
-async def analytics_risk_by_course(current_user: dict = Depends(get_current_user)):
-    """Get risk distribution by course type for current tenant"""
+async def analytics_risk_by_course(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get risk distribution by course type using joined query"""
     tenant_id = current_user["tenant_id"]
-    tenant_portfolio = portfolio_store.get(tenant_id, {})
+    
+    # This is a bit more complex in SQL but much faster
+    results = db.query(StudentProfile, PredictionResult).join(
+        PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
+    ).filter(StudentProfile.tenant_id == tenant_id).all()
     
     course_risk = {}
-    
-    for student_id, s in tenant_portfolio.items():
-        try:
-            academic = s.get('academic', {})
-            pred = s.get('prediction', {})
-            course = academic.get('course_type') if isinstance(academic, dict) else None
+    for profile, pred in results:
+        course = profile.academic_data.get('course_type')
+        if not course: continue
+        
+        if course not in course_risk:
+            course_risk[course] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
             
-            risk_assessment = pred.get('risk_assessment', {})
-            risk_level = risk_assessment.get('risk_level') if isinstance(risk_assessment, dict) else None
+        level = pred.risk_level
+        if level in course_risk[course]:
+            course_risk[course][level] += 1
+            course_risk[course]["total"] += 1
             
-            if course:
-                if course not in course_risk:
-                    course_risk[course] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
-                
-                if risk_level and risk_level in course_risk[course]:
-                    course_risk[course][risk_level] += 1
-                    course_risk[course]["total"] += 1
-        except:
-            continue
-    
     return course_risk
 
 
 @router.get("/analytics/risk-by-tier")
-async def analytics_risk_by_tier(current_user: dict = Depends(get_current_user)):
-    """Get risk distribution by institute tier for current tenant"""
+async def analytics_risk_by_tier(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get risk distribution by institute tier using joined query"""
     tenant_id = current_user["tenant_id"]
-    tenant_portfolio = portfolio_store.get(tenant_id, {})
+    
+    results = db.query(StudentProfile, PredictionResult).join(
+        PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
+    ).filter(StudentProfile.tenant_id == tenant_id).all()
     
     tier_risk = {}
-    
-    for student_id, s in tenant_portfolio.items():
-        try:
-            institute = s.get('institute', {})
-            pred = s.get('prediction', {})
-            tier = institute.get('institute_tier') if isinstance(institute, dict) else None
+    for profile, pred in results:
+        tier = profile.institute_data.get('institute_tier')
+        if not tier: continue
+        
+        if tier not in tier_risk:
+            tier_risk[tier] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
             
-            risk_assessment = pred.get('risk_assessment', {})
-            risk_level = risk_assessment.get('risk_level') if isinstance(risk_assessment, dict) else None
+        level = pred.risk_level
+        if level in tier_risk[tier]:
+            tier_risk[tier][level] += 1
+            tier_risk[tier]["total"] += 1
             
-            if tier:
-                if tier not in tier_risk:
-                    tier_risk[tier] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
-                
-                if risk_level and risk_level in tier_risk[tier]:
-                    tier_risk[tier][risk_level] += 1
-                    tier_risk[tier]["total"] += 1
-        except:
-            continue
-    
     return tier_risk
