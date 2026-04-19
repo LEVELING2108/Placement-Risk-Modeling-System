@@ -28,6 +28,7 @@ models/*.pkl
 models/*.joblib
 data/*.csv
 data/*.json
+!data/training_metrics.json
 data/*.png
 
 # IDE
