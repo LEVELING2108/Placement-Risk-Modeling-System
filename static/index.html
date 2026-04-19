@@ -697,36 +697,50 @@
                 const perfData = await perfRes.json();
                 
                 if (perfData && !perfData.error) {
-                    const metrics = perfData.placement_model || {};
-                    document.getElementById('health-accuracy').textContent = (metrics.accuracy * 100).toFixed(1) + '%';
+                    // Extract from nested structure: placement -> 6m -> random_forest
+                    const placement = perfData.placement || {};
+                    const m6 = placement['6m'] || {};
+                    const metrics = m6.random_forest || {};
                     
-                    const ctx = document.getElementById('chart-model-perf').getContext('2d');
-                    if (charts.modelPerf) charts.modelPerf.destroy();
-                    
-                    const labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score'];
-                    const values = [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1_score];
-                    
-                    charts.modelPerf = new Chart(ctx, {
-                        type: 'radar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Placement Model (6m)',
-                                data: values,
-                                backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                                borderColor: 'rgba(79, 70, 229, 1)',
-                                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                r: { beginAtZero: true, max: 1, ticks: { display: false } }
+                    if (metrics.accuracy) {
+                        document.getElementById('health-accuracy').textContent = (metrics.accuracy * 100).toFixed(1) + '%';
+                        
+                        const ctx = document.getElementById('chart-model-perf').getContext('2d');
+                        if (charts.modelPerf) charts.modelPerf.destroy();
+                        
+                        const labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score'];
+                        const values = [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1];
+                        
+                        charts.modelPerf = new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Placement Model (6m RF)',
+                                    data: values,
+                                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                                    borderColor: 'rgba(79, 70, 229, 1)',
+                                    pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    r: { 
+                                        beginAtZero: true, 
+                                        max: 1, 
+                                        ticks: { display: false },
+                                        grid: { color: 'rgba(0,0,0,0.05)' }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { position: 'bottom' }
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
 
                 // 2. Fetch Bias Analysis

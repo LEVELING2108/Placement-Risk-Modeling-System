@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./placement_risk.db:/app/placement_risk.db
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env
+    restart: always
+
+volumes:
+  data:
+  models:

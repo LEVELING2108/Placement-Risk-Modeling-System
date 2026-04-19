@@ -87,15 +87,19 @@ ADZUNA_APP_KEY=your_adzuna_key
 
 ### 3. Initialize & Start
 
+**Option A: Standard Local Run**
 ```bash
 # Initialize database and seed users
 python init_db.py
 
-# Train models (optional if already trained)
-python train.py
-
 # Start the FastAPI server
 python main.py
+```
+
+**Option B: Docker (Recommended for Production)**
+```bash
+# Build and start the entire stack with persistence
+docker-compose up --build
 ```
 **Dashboard:** [http://localhost:8000](http://localhost:8000)  
 **Demo Credentials:** `lender_a` / `password123`
