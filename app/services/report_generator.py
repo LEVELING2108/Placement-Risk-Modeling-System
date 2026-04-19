@@ -1,10 +1,14 @@
 from fpdf import FPDF
 from datetime import datetime
 from typing import Dict, Any
+import matplotlib.pyplot as plt
+import tempfile
+import os
+import io
 
 class ReportGenerator:
     """
-    Generates professional PDF Credit Memos / Risk Summaries
+    Generates professional PDF Credit Memos / Risk Summaries with Visual Charts
     """
     
     def __init__(self, student_data: Dict[str, Any]):
@@ -29,6 +33,7 @@ class ReportGenerator:
         self._student_info()
         self._risk_assessment()
         self._placement_prediction()
+        self._explainability_chart()
         self._ai_roadmap()
         self._footer()
         print("DEBUG: PDF Generation complete")
@@ -127,6 +132,47 @@ class ReportGenerator:
         self.pdf.cell(0, 8, f"Estimated Starting Salary: INR {avg_sal/100000:.2f} Lakhs/yr", ln=True)
         
         self.pdf.ln(10)
+
+    def _explainability_chart(self):
+        pred = self.student.get('prediction', {})
+        scores = pred.get('explainability_scores', {})
+        
+        if not scores: return
+        
+        self.pdf.set_font(self.font, 'B', 14)
+        self.pdf.cell(0, 10, 'IV. FEATURE CONTRIBUTIONS (SHAP)', ln=True)
+        self.pdf.set_font(self.font, '', 10)
+        self.pdf.cell(0, 6, 'Visual representation of factors impacting placement probability:', ln=True)
+        
+        # Generate Plot
+        try:
+            # Sort and take top 10
+            sorted_scores = sorted(scores.items(), key=lambda x: abs(x[1]), reverse=True)[:10]
+            labels = [s[0].replace('_', ' ').title() for s in sorted_scores]
+            values = [s[1] for s in sorted_scores]
+            colors = ['#10b981' if v > 0 else '#ef4444' for v in values]
+            
+            plt.figure(figsize=(8, 5))
+            plt.barh(labels, values, color=colors)
+            plt.axvline(x=0, color='black', linestyle='-', linewidth=0.8)
+            plt.xlabel('Contribution Score')
+            plt.title('Top Factors Driving Prediction')
+            plt.gca().invert_yaxis()
+            plt.tight_layout()
+            
+            # Save to temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp:
+                plt.savefig(tmp.name, dpi=300)
+                plt.close()
+                # Insert into PDF
+                self.pdf.image(tmp.name, x=15, w=180)
+                os.unlink(tmp.name) # Clean up
+                
+            self.pdf.ln(5)
+        except Exception as e:
+            print(f"ERROR: Could not generate SHAP chart for PDF: {e}")
+            self.pdf.set_font(self.font, 'I', 10)
+            self.pdf.cell(0, 10, '(Visual chart generation failed, see text assessment)', ln=True)
 
     def _ai_roadmap(self):
         pred = self.student.get('prediction', {})

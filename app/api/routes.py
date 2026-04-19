@@ -250,6 +250,131 @@ async def get_student_report(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=error_msg)
 
+@router.get("/portfolio/trends")
+async def get_portfolio_trends(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get 30-day portfolio health trends using SQL date grouping"""
+    tenant_id = current_user["tenant_id"]
+    
+    # Query avg risk score grouped by date for last 30 days
+    # SQLite specific date grouping
+    results = db.query(
+        func.date(PredictionResult.created_at).label("date"),
+        func.avg(PredictionResult.placement_risk_score).label("avg_risk")
+    ).filter(
+        PredictionResult.tenant_id == tenant_id,
+        PredictionResult.created_at >= func.date('now', '-30 days')
+    ).group_by(
+        func.date(PredictionResult.created_at)
+    ).order_by("date").all()
+    
+    trends = []
+    for date, avg_risk in results:
+        trends.append({
+            "date": date,
+            "health_score": round(1 - avg_risk, 3)
+        })
+        
+    return trends
+
+
+@router.delete("/portfolio/bulk")
+async def bulk_delete_students(
+    student_ids: List[str],
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Bulk delete student profiles and their predictions"""
+    tenant_id = current_user["tenant_id"]
+    
+    try:
+        # Delete predictions first (foreign key constraint)
+        db.query(PredictionResult).filter(
+            PredictionResult.tenant_id == tenant_id,
+            PredictionResult.student_profile_id.in_(
+                db.query(StudentProfile.id).filter(
+                    StudentProfile.student_id.in_(student_ids),
+                    StudentProfile.tenant_id == tenant_id
+                )
+            )
+        ).delete(synchronize_session=False)
+        
+        # Delete profiles
+        db.query(StudentProfile).filter(
+            StudentProfile.student_id.in_(student_ids),
+            StudentProfile.tenant_id == tenant_id
+        ).delete(synchronize_session=False)
+        
+        db.commit()
+        return {"message": f"Successfully deleted {len(student_ids)} student records"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Bulk delete failed: {str(e)}")
+
+
+@router.post("/portfolio/bulk/reports")
+async def bulk_download_reports(
+    student_ids: List[str],
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Generate multiple reports and return them in a ZIP archive"""
+    tenant_id = current_user["tenant_id"]
+    import zipfile
+    import io
+    
+    zip_buffer = io.BytesIO()
+    
+    try:
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            for sid in student_ids:
+                # Fetch data (re-use logic from single report)
+                profile = db.query(StudentProfile).filter(
+                    StudentProfile.student_id == sid,
+                    StudentProfile.tenant_id == tenant_id
+                ).first()
+                
+                if profile:
+                    latest_pred = db.query(PredictionResult).filter(
+                        PredictionResult.student_profile_id == profile.id
+                    ).order_by(PredictionResult.created_at.desc()).first()
+                    
+                    if latest_pred:
+                        # Helper to ensure dict
+                        def to_dict(data):
+                            if isinstance(data, str):
+                                import json
+                                return json.loads(data)
+                            return data
+
+                        data = {
+                            "student_id": profile.student_id,
+                            "academic": to_dict(profile.academic_data),
+                            "institute": to_dict(profile.institute_data),
+                            "labor_market": to_dict(profile.labor_market_data),
+                            "real_time_signals": to_dict(profile.real_time_signals),
+                            "prediction": to_dict(latest_pred.full_prediction)
+                        }
+                        
+                        generator = ReportGenerator(data)
+                        pdf_bytes = generator.generate()
+                        zip_file.writestr(f"RiskReport_{sid}.pdf", bytes(pdf_bytes))
+        
+        zip_buffer.seek(0)
+        return Response(
+            content=zip_buffer.getvalue(),
+            media_type="application/zip",
+            headers={
+                "Content-Disposition": 'attachment; filename="Bulk_CreditMemos.zip"',
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Bulk report generation failed: {str(e)}")
+
+
 @router.get("/model-info")
 async def get_model_info(db: Session = Depends(get_db)):
     """Get information about the loaded models and registry from DB"""
