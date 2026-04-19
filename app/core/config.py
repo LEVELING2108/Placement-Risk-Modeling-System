@@ -2,6 +2,12 @@
 Configuration settings for the application
 """
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 class Settings:
     APP_NAME = "Placement-Risk Modeling System"
     APP_VERSION = "1.0.0"

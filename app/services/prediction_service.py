@@ -14,6 +14,7 @@ from app.models.placement_model import PlacementPredictionModel
 from app.models.salary_model import SalaryPredictionModel
 from app.services.risk_scoring import RiskScoringSystem
 from app.services.recommendation import RecommendationEngine
+from app.services.market_data import MarketDataService
 from app.schemas.prediction import (
     StudentPredictionRequest,
     StudentPredictionResponse,
@@ -40,6 +41,7 @@ class PredictionService:
         self.salary_model = SalaryPredictionModel()
         self.risk_scoring = RiskScoringSystem()
         self.recommendation_engine = RecommendationEngine()
+        self.market_data = MarketDataService()
         
         self.models_loaded = False
         # Try to load models on initialization
@@ -62,15 +64,16 @@ class PredictionService:
     def predict_single(self, request: StudentPredictionRequest) -> StudentPredictionResponse:
         """
         Generate complete prediction for a single student
-        
-        Args:
-            request: Student prediction request
-            
-        Returns:
-            Complete prediction response
         """
-        # Convert request to dictionary
+        # Step 0: Enrich with Market Data (Phase 3)
+        sector = request.academic.course_type.value
+        market_stats = self.market_data.get_sector_demand(sector)
+        
+        # Merge market stats into request dict for model consumption
         data = request.model_dump()
+        if market_stats.get("live_data"):
+            data["labor_market"]["field_job_demand_score"] = market_stats["field_job_demand_score"]
+            data["labor_market"]["sector_hiring_growth"] = market_stats["sector_hiring_growth"]
         
         # Step 1: Preprocess data
         df_processed = self.preprocessor.preprocess_student_data(data)
@@ -93,40 +96,26 @@ class PredictionService:
             df_engineered, placement_probs, salary_pred
         )
         
-        # Step 7: Generate recommendations
-        summary = self.recommendation_engine.generate_summary(
-            risk_level, risk_factors, placement_probs, salary_pred, df_engineered
-        )
-        
-        next_best_actions = self.recommendation_engine.generate_recommendations(
-            risk_level, risk_factors, df_engineered
+        # Step 7: Generate advanced AI recommendations (Phase 3)
+        ai_recommendations = self.recommendation_engine.generate_advanced_recommendations(
+            data, 
+            {"risk_level": risk_level, "placement_risk_score": risk_score, "risk_factors": risk_factors},
+            placement_probs,
+            salary_pred
         )
         
         # Get recruiter matches
-        course_type = request.academic.course_type.value
-        recruiter_matches = self.recommendation_engine.get_recruiter_matches(course_type)
+        recruiter_matches = self.recommendation_engine.get_recruiter_matches(sector)
         
         # Step 8: Get explainability data (SHAP values)
         try:
-            # Get local SHAP explanations for this specific student
             shap_values = self.placement_model.get_shap_explanations(df_engineered)
-            
-            # Combine SHAP values with global importance for a richer explanation
             explainability_scores = {
                 k: float(v) for k, v in 
                 sorted(shap_values.items(), key=lambda x: abs(x[1]), reverse=True)[:15]
             }
-        except Exception as e:
-            print(f"Warning: SHAP calculation failed: {e}")
-            try:
-                # Fallback to global feature importance
-                placement_importance = self.placement_model.get_feature_importance()
-                explainability_scores = {
-                    k: float(v) for k, v in 
-                    sorted(placement_importance.items(), key=lambda x: x[1], reverse=True)[:10]
-                }
-            except:
-                explainability_scores = {}
+        except:
+            explainability_scores = {}
         
         # Build response
         placement_prediction = PlacementPrediction(
@@ -150,9 +139,10 @@ class PredictionService:
             risk_factors=risk_factors
         )
         
+        # Map AI recommendations to response schema
         recommendations = Recommendation(
-            summary=summary,
-            next_best_actions=next_best_actions,
+            summary=ai_recommendations.get("summary", ""),
+            next_best_actions=ai_recommendations.get("next_best_actions", []),
             recruiter_matches=recruiter_matches[:5]
         )
         
@@ -169,80 +159,33 @@ class PredictionService:
         
         return response
     
-    def predict_batch(
-        self, 
-        requests: List[StudentPredictionRequest]
-    ) -> List[StudentPredictionResponse]:
-        """
-        Generate predictions for multiple students
-        
-        Args:
-            requests: List of student prediction requests
-            
-        Returns:
-            List of prediction responses
-        """
+    def predict_batch(self, requests: List[StudentPredictionRequest]) -> List[StudentPredictionResponse]:
         results = []
-        
         for request in requests:
             try:
                 result = self.predict_single(request)
                 results.append(result)
             except Exception as e:
                 print(f"Error predicting for student {request.student_id}: {e}")
-                # Continue with next student
-        
         return results
 
-    def simulate(
-        self, 
-        base_request: StudentPredictionRequest, 
-        modifications: Dict[str, any]
-    ) -> StudentPredictionResponse:
-        """
-        Simulate a change in student attributes and see the impact on prediction
-        """
-        # Create deep copy of the request
+    def simulate(self, base_request: StudentPredictionRequest, modifications: Dict[str, any]) -> StudentPredictionResponse:
         request_dict = base_request.model_dump()
-        
-        # Apply modifications
         for key, value in modifications.items():
             self._set_nested_value(request_dict, key, value)
             
-        # Re-create request object from modified dict
-        modified_request = StudentAcademicData(**request_dict['academic'])
-        modified_institute = InstituteData(**request_dict['institute'])
-        modified_labor = LaborMarketData(**request_dict['labor_market'])
-        
-        # This is a bit tedious to manually rebuild, let's just use the dict directly in predict_single if it supported it
-        # Or better, let's create a new request object
-        
         from app.schemas.prediction import StudentPredictionRequest as SPR
-        new_request = SPR(
-            student_id=base_request.student_id,
-            academic=modified_request,
-            institute=modified_institute,
-            labor_market=modified_labor,
-            real_time_signals=base_request.real_time_signals,
-            prediction_date=base_request.prediction_date
-        )
-        
+        new_request = SPR(**request_dict)
         return self.predict_single(new_request)
 
     def _set_nested_value(self, d, key, value):
-        """Helper to set nested dictionary value using dot notation"""
         parts = key.split('.')
         for part in parts[:-1]:
             d = d.setdefault(part, {})
         d[parts[-1]] = value
 
     def _format_timeline(self, months: int) -> str:
-        """Format timeline prediction to human-readable string"""
-        if months <= 3:
-            return "Placed within 3 months"
-        elif months <= 6:
-            return "Placed within 6 months"
-        elif months <= 12:
-            return "Placed within 12 months"
-        else:
-            return "High risk of delayed placement"
+        if months <= 3: return "Placed within 3 months"
+        elif months <= 6: return "Placed within 6 months"
+        elif months <= 12: return "Placed within 12 months"
+        else: return "High risk of delayed placement"
