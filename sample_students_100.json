@@ -1,0 +1,3902 @@
+[
+  {
+    "student_id": "STU_0001",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 5,
+      "cgpa": 8.3,
+      "academic_consistency": 0.8,
+      "internship_count": 5,
+      "total_internship_duration_months": 4.9,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.65,
+      "skill_certifications_count": 7,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.76,
+      "historic_placement_rate_6m": 0.93,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 922774,
+      "placement_cell_activity_level": 0.85,
+      "recruiter_participation_score": 0.75
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.91,
+      "region_job_density": 0.83,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.16,
+      "macroeconomic_condition_score": 0.65
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 26,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.67
+    }
+  },
+  {
+    "student_id": "STU_0002",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 8.4,
+      "academic_consistency": 0.93,
+      "internship_count": 5,
+      "total_internship_duration_months": 4.0,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.61,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 14
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.8,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 527290,
+      "placement_cell_activity_level": 0.86,
+      "recruiter_participation_score": 0.74
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.76,
+      "region_job_density": 0.72,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.31,
+      "macroeconomic_condition_score": 0.66
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 35,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.49
+    }
+  },
+  {
+    "student_id": "STU_0003",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 9,
+      "cgpa": 5.7,
+      "academic_consistency": 0.46,
+      "internship_count": 0,
+      "total_internship_duration_months": 0.4,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.23,
+      "historic_placement_rate_6m": 0.43,
+      "historic_placement_rate_12m": 0.51,
+      "historic_avg_salary": 278963,
+      "placement_cell_activity_level": 0.48,
+      "recruiter_participation_score": 0.37
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.22,
+      "region_job_density": 0.21,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.03,
+      "macroeconomic_condition_score": 0.34
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 0,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.7
+    }
+  },
+  {
+    "student_id": "STU_0004",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 10,
+      "cgpa": 7.6,
+      "academic_consistency": 0.73,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.8,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.62,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 7
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.63,
+      "historic_placement_rate_6m": 0.75,
+      "historic_placement_rate_12m": 0.87,
+      "historic_avg_salary": 453779,
+      "placement_cell_activity_level": 0.62,
+      "recruiter_participation_score": 0.49
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.55,
+      "region_job_density": 0.62,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.6
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 12,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.6
+    }
+  },
+  {
+    "student_id": "STU_0005",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 8.6,
+      "academic_consistency": 0.96,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.79,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 10
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.27,
+      "historic_placement_rate_6m": 0.47,
+      "historic_placement_rate_12m": 0.55,
+      "historic_avg_salary": 467053,
+      "placement_cell_activity_level": 0.44,
+      "recruiter_participation_score": 0.44
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.91,
+      "region_job_density": 0.65,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.13,
+      "macroeconomic_condition_score": 0.73
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 29,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.69
+    }
+  },
+  {
+    "student_id": "STU_0006",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 5,
+      "cgpa": 4.8,
+      "academic_consistency": 0.53,
+      "internship_count": 0,
+      "total_internship_duration_months": 0.0,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.59,
+      "historic_placement_rate_6m": 0.75,
+      "historic_placement_rate_12m": 0.84,
+      "historic_avg_salary": 418993,
+      "placement_cell_activity_level": 0.56,
+      "recruiter_participation_score": 0.43
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.3,
+      "region_job_density": 0.31,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": -0.05,
+      "macroeconomic_condition_score": 0.42
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 7,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.74
+    }
+  },
+  {
+    "student_id": "STU_0007",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 5,
+      "cgpa": 9.3,
+      "academic_consistency": 0.83,
+      "internship_count": 3,
+      "total_internship_duration_months": 4.1,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.7,
+      "skill_certifications_count": 8,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.72,
+      "historic_placement_rate_6m": 0.82,
+      "historic_placement_rate_12m": 0.93,
+      "historic_avg_salary": 566280,
+      "placement_cell_activity_level": 0.87,
+      "recruiter_participation_score": 0.92
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.77,
+      "region_job_density": 0.68,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.07,
+      "macroeconomic_condition_score": 0.84
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 26,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 7,
+      "institute_placement_progress": 0.48
+    }
+  },
+  {
+    "student_id": "STU_0008",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 9.1,
+      "academic_consistency": 0.89,
+      "internship_count": 4,
+      "total_internship_duration_months": 5.3,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.52,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.78,
+      "historic_placement_rate_6m": 0.94,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 991479,
+      "placement_cell_activity_level": 0.8,
+      "recruiter_participation_score": 0.71
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.8,
+      "region_job_density": 0.84,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.34,
+      "macroeconomic_condition_score": 0.83
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 36,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 7,
+      "institute_placement_progress": 0.6
+    }
+  },
+  {
+    "student_id": "STU_0009",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 10,
+      "cgpa": 6.1,
+      "academic_consistency": 0.38,
+      "internship_count": 0,
+      "total_internship_duration_months": 1.5,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.89,
+      "historic_placement_rate_12m": 0.95,
+      "historic_avg_salary": 904562,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.78
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.22,
+      "region_job_density": 0.28,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": -0.02,
+      "macroeconomic_condition_score": 0.45
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 3,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.76
+    }
+  },
+  {
+    "student_id": "STU_0010",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 6.4,
+      "academic_consistency": 0.42,
+      "internship_count": 0,
+      "total_internship_duration_months": 1.6,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.54,
+      "historic_placement_rate_6m": 0.72,
+      "historic_placement_rate_12m": 0.79,
+      "historic_avg_salary": 386443,
+      "placement_cell_activity_level": 0.61,
+      "recruiter_participation_score": 0.52
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.35,
+      "region_job_density": 0.27,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": -0.08,
+      "macroeconomic_condition_score": 0.46
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 7,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.56
+    }
+  },
+  {
+    "student_id": "STU_0011",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 6.0,
+      "academic_consistency": 0.43,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.0,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.86,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.4,
+      "historic_placement_rate_6m": 0.59,
+      "historic_placement_rate_12m": 0.69,
+      "historic_avg_salary": 317239,
+      "placement_cell_activity_level": 0.47,
+      "recruiter_participation_score": 0.39
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.25,
+      "region_job_density": 0.24,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.0,
+      "macroeconomic_condition_score": 0.28
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 5,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.32
+    }
+  },
+  {
+    "student_id": "STU_0012",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 3,
+      "semester": 9,
+      "cgpa": 5.8,
+      "academic_consistency": 0.35,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.2,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.72,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.55,
+      "historic_placement_rate_6m": 0.71,
+      "historic_placement_rate_12m": 0.79,
+      "historic_avg_salary": 545334,
+      "placement_cell_activity_level": 0.68,
+      "recruiter_participation_score": 0.71
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.24,
+      "region_job_density": 0.22,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": -0.17,
+      "macroeconomic_condition_score": 0.36
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 2,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.32
+    }
+  },
+  {
+    "student_id": "STU_0013",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 8,
+      "cgpa": 9.2,
+      "academic_consistency": 0.77,
+      "internship_count": 5,
+      "total_internship_duration_months": 4.2,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.75,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 14
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.62,
+      "historic_placement_rate_6m": 0.79,
+      "historic_placement_rate_12m": 0.86,
+      "historic_avg_salary": 352030,
+      "placement_cell_activity_level": 0.79,
+      "recruiter_participation_score": 0.66
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.75,
+      "region_job_density": 0.75,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.15,
+      "macroeconomic_condition_score": 0.77
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 26,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.65
+    }
+  },
+  {
+    "student_id": "STU_0014",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 4.4,
+      "academic_consistency": 0.35,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.0,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.56,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 3
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.28,
+      "historic_placement_rate_6m": 0.47,
+      "historic_placement_rate_12m": 0.54,
+      "historic_avg_salary": 383653,
+      "placement_cell_activity_level": 0.54,
+      "recruiter_participation_score": 0.46
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.23,
+      "region_job_density": 0.22,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": -0.04,
+      "macroeconomic_condition_score": 0.43
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 3,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.59
+    }
+  },
+  {
+    "student_id": "STU_0015",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 9,
+      "cgpa": 8.5,
+      "academic_consistency": 0.76,
+      "internship_count": 4,
+      "total_internship_duration_months": 7.3,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.93,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.4,
+      "historic_placement_rate_6m": 0.53,
+      "historic_placement_rate_12m": 0.62,
+      "historic_avg_salary": 300647,
+      "placement_cell_activity_level": 0.32,
+      "recruiter_participation_score": 0.24
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.81,
+      "region_job_density": 0.74,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.27,
+      "macroeconomic_condition_score": 0.75
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 35,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.77
+    }
+  },
+  {
+    "student_id": "STU_0016",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 6.8,
+      "academic_consistency": 0.66,
+      "internship_count": 1,
+      "total_internship_duration_months": 2.0,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.61,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 6
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.71,
+      "historic_placement_rate_6m": 0.86,
+      "historic_placement_rate_12m": 0.93,
+      "historic_avg_salary": 558834,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.68
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.66,
+      "region_job_density": 0.48,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.15,
+      "macroeconomic_condition_score": 0.57
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 14,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.73
+    }
+  },
+  {
+    "student_id": "STU_0017",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 5,
+      "semester": 8,
+      "cgpa": 7.9,
+      "academic_consistency": 0.76,
+      "internship_count": 5,
+      "total_internship_duration_months": 3.0,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.78,
+      "skill_certifications_count": 7,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.75,
+      "historic_placement_rate_6m": 0.92,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 581696,
+      "placement_cell_activity_level": 0.86,
+      "recruiter_participation_score": 0.75
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.76,
+      "region_job_density": 0.62,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.25,
+      "macroeconomic_condition_score": 0.73
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 25,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.46
+    }
+  },
+  {
+    "student_id": "STU_0018",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 9,
+      "cgpa": 9.3,
+      "academic_consistency": 0.98,
+      "internship_count": 2,
+      "total_internship_duration_months": 5.2,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.78,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.72,
+      "historic_placement_rate_6m": 0.83,
+      "historic_placement_rate_12m": 0.92,
+      "historic_avg_salary": 736919,
+      "placement_cell_activity_level": 0.91,
+      "recruiter_participation_score": 0.79
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.78,
+      "region_job_density": 0.81,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.32,
+      "macroeconomic_condition_score": 0.66
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 40,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.52
+    }
+  },
+  {
+    "student_id": "STU_0019",
+    "academic": {
+      "course_type": "Science",
+      "current_year": 5,
+      "semester": 7,
+      "cgpa": 8.4,
+      "academic_consistency": 0.9,
+      "internship_count": 5,
+      "total_internship_duration_months": 7.5,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.94,
+      "skill_certifications_count": 8,
+      "relevant_coursework_count": 10
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.69,
+      "historic_placement_rate_6m": 0.83,
+      "historic_placement_rate_12m": 0.91,
+      "historic_avg_salary": 468021,
+      "placement_cell_activity_level": 0.86,
+      "recruiter_participation_score": 0.82
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.67,
+      "region_job_density": 0.88,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.35,
+      "macroeconomic_condition_score": 0.72
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 28,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.38
+    }
+  },
+  {
+    "student_id": "STU_0020",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 4,
+      "semester": 5,
+      "cgpa": 7.4,
+      "academic_consistency": 0.67,
+      "internship_count": 1,
+      "total_internship_duration_months": 4.0,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.94,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.42,
+      "historic_placement_rate_6m": 0.56,
+      "historic_placement_rate_12m": 0.66,
+      "historic_avg_salary": 789332,
+      "placement_cell_activity_level": 0.65,
+      "recruiter_participation_score": 0.58
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.64,
+      "region_job_density": 0.41,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.06,
+      "macroeconomic_condition_score": 0.57
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.49
+    }
+  },
+  {
+    "student_id": "STU_0021",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 8.9,
+      "academic_consistency": 0.78,
+      "internship_count": 4,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.62,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.71,
+      "historic_placement_rate_6m": 0.87,
+      "historic_placement_rate_12m": 0.95,
+      "historic_avg_salary": 738432,
+      "placement_cell_activity_level": 0.76,
+      "recruiter_participation_score": 0.8
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.82,
+      "region_job_density": 0.72,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.23,
+      "macroeconomic_condition_score": 0.8
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 39,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.3
+    }
+  },
+  {
+    "student_id": "STU_0022",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 7.2,
+      "academic_consistency": 0.69,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.3,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.85,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.84,
+      "historic_placement_rate_12m": 0.94,
+      "historic_avg_salary": 467943,
+      "placement_cell_activity_level": 0.94,
+      "recruiter_participation_score": 0.8
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.56,
+      "region_job_density": 0.56,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.07,
+      "macroeconomic_condition_score": 0.64
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 12,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.45
+    }
+  },
+  {
+    "student_id": "STU_0023",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 7,
+      "cgpa": 7.4,
+      "academic_consistency": 0.71,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.93,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.64,
+      "historic_placement_rate_6m": 0.78,
+      "historic_placement_rate_12m": 0.88,
+      "historic_avg_salary": 464784,
+      "placement_cell_activity_level": 0.68,
+      "recruiter_participation_score": 0.61
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.44,
+      "region_job_density": 0.46,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.57
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 17,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.68
+    }
+  },
+  {
+    "student_id": "STU_0024",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 6.3,
+      "academic_consistency": 0.57,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.0,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.67,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.67,
+      "historic_placement_rate_6m": 0.78,
+      "historic_placement_rate_12m": 0.84,
+      "historic_avg_salary": 425305,
+      "placement_cell_activity_level": 0.86,
+      "recruiter_participation_score": 0.87
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.32,
+      "region_job_density": 0.15,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": -0.07,
+      "macroeconomic_condition_score": 0.33
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 4,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.5
+    }
+  },
+  {
+    "student_id": "STU_0025",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 4,
+      "semester": 6,
+      "cgpa": 4.8,
+      "academic_consistency": 0.38,
+      "internship_count": 1,
+      "total_internship_duration_months": 0.2,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.73,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.35,
+      "historic_placement_rate_6m": 0.48,
+      "historic_placement_rate_12m": 0.56,
+      "historic_avg_salary": 417146,
+      "placement_cell_activity_level": 0.42,
+      "recruiter_participation_score": 0.29
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.28,
+      "region_job_density": 0.32,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": -0.07,
+      "macroeconomic_condition_score": 0.28
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 1,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.31
+    }
+  },
+  {
+    "student_id": "STU_0026",
+    "academic": {
+      "course_type": "Science",
+      "current_year": 4,
+      "semester": 6,
+      "cgpa": 9.5,
+      "academic_consistency": 0.94,
+      "internship_count": 4,
+      "total_internship_duration_months": 4.1,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.61,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 12
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.78,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 389292,
+      "placement_cell_activity_level": 0.81,
+      "recruiter_participation_score": 0.76
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.65,
+      "region_job_density": 0.76,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.13,
+      "macroeconomic_condition_score": 0.89
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 32,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.27
+    }
+  },
+  {
+    "student_id": "STU_0027",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 6.2,
+      "academic_consistency": 0.41,
+      "internship_count": 1,
+      "total_internship_duration_months": 0.8,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.68,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.48,
+      "historic_placement_rate_6m": 0.63,
+      "historic_placement_rate_12m": 0.7,
+      "historic_avg_salary": 522527,
+      "placement_cell_activity_level": 0.68,
+      "recruiter_participation_score": 0.66
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.21,
+      "region_job_density": 0.38,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.0,
+      "macroeconomic_condition_score": 0.27
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 1,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.43
+    }
+  },
+  {
+    "student_id": "STU_0028",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 8.7,
+      "academic_consistency": 0.81,
+      "internship_count": 3,
+      "total_internship_duration_months": 4.6,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.91,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 14
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.71,
+      "historic_placement_rate_6m": 0.88,
+      "historic_placement_rate_12m": 0.96,
+      "historic_avg_salary": 625099,
+      "placement_cell_activity_level": 0.84,
+      "recruiter_participation_score": 0.78
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.68,
+      "region_job_density": 0.9,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.32,
+      "macroeconomic_condition_score": 0.77
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 8,
+      "institute_placement_progress": 0.76
+    }
+  },
+  {
+    "student_id": "STU_0029",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 5,
+      "cgpa": 4.3,
+      "academic_consistency": 0.52,
+      "internship_count": 0,
+      "total_internship_duration_months": 1.3,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.59,
+      "historic_placement_rate_6m": 0.78,
+      "historic_placement_rate_12m": 0.87,
+      "historic_avg_salary": 476953,
+      "placement_cell_activity_level": 0.6,
+      "recruiter_participation_score": 0.63
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.17,
+      "region_job_density": 0.32,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": -0.05,
+      "macroeconomic_condition_score": 0.3
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 5,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.43
+    }
+  },
+  {
+    "student_id": "STU_0030",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 4,
+      "semester": 6,
+      "cgpa": 4.7,
+      "academic_consistency": 0.43,
+      "internship_count": 1,
+      "total_internship_duration_months": 0.9,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.76,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.24,
+      "historic_placement_rate_6m": 0.37,
+      "historic_placement_rate_12m": 0.49,
+      "historic_avg_salary": 517700,
+      "placement_cell_activity_level": 0.43,
+      "recruiter_participation_score": 0.31
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.38,
+      "region_job_density": 0.25,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": -0.15,
+      "macroeconomic_condition_score": 0.34
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 0,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.52
+    }
+  },
+  {
+    "student_id": "STU_0031",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 7.4,
+      "academic_consistency": 0.57,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.5,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.52,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.66,
+      "historic_placement_rate_6m": 0.8,
+      "historic_placement_rate_12m": 0.87,
+      "historic_avg_salary": 573817,
+      "placement_cell_activity_level": 0.76,
+      "recruiter_participation_score": 0.71
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.68,
+      "region_job_density": 0.54,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.74
+    }
+  },
+  {
+    "student_id": "STU_0032",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 5,
+      "semester": 6,
+      "cgpa": 6.7,
+      "academic_consistency": 0.77,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.7,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.64,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.64,
+      "historic_placement_rate_6m": 0.77,
+      "historic_placement_rate_12m": 0.84,
+      "historic_avg_salary": 459467,
+      "placement_cell_activity_level": 0.8,
+      "recruiter_participation_score": 0.8
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.51,
+      "region_job_density": 0.59,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.09,
+      "macroeconomic_condition_score": 0.63
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 19,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.56
+    }
+  },
+  {
+    "student_id": "STU_0033",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 6.3,
+      "academic_consistency": 0.59,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.9,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 7
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.21,
+      "historic_placement_rate_6m": 0.36,
+      "historic_placement_rate_12m": 0.47,
+      "historic_avg_salary": 613991,
+      "placement_cell_activity_level": 0.44,
+      "recruiter_participation_score": 0.4
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.41,
+      "region_job_density": 0.64,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.05,
+      "macroeconomic_condition_score": 0.69
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 11,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.7
+    }
+  },
+  {
+    "student_id": "STU_0034",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 5.0,
+      "academic_consistency": 0.36,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.4,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.87,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.45,
+      "historic_placement_rate_6m": 0.57,
+      "historic_placement_rate_12m": 0.67,
+      "historic_avg_salary": 248768,
+      "placement_cell_activity_level": 0.52,
+      "recruiter_participation_score": 0.56
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.38,
+      "region_job_density": 0.25,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": -0.13,
+      "macroeconomic_condition_score": 0.49
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 5,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.73
+    }
+  },
+  {
+    "student_id": "STU_0035",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 7.9,
+      "academic_consistency": 0.92,
+      "internship_count": 2,
+      "total_internship_duration_months": 6.0,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.55,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.77,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 715629,
+      "placement_cell_activity_level": 0.89,
+      "recruiter_participation_score": 0.81
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.68,
+      "region_job_density": 0.67,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.23,
+      "macroeconomic_condition_score": 0.79
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 37,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.26
+    }
+  },
+  {
+    "student_id": "STU_0036",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 6.6,
+      "academic_consistency": 0.77,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.3,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.8,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.5,
+      "historic_placement_rate_6m": 0.62,
+      "historic_placement_rate_12m": 0.71,
+      "historic_avg_salary": 438069,
+      "placement_cell_activity_level": 0.58,
+      "recruiter_participation_score": 0.57
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.45,
+      "region_job_density": 0.55,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.55
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.34
+    }
+  },
+  {
+    "student_id": "STU_0037",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 7.8,
+      "academic_consistency": 0.82,
+      "internship_count": 2,
+      "total_internship_duration_months": 7.5,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.62,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.85,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 537145,
+      "placement_cell_activity_level": 0.9,
+      "recruiter_participation_score": 0.82
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.85,
+      "region_job_density": 0.71,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.22,
+      "macroeconomic_condition_score": 0.87
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 34,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.45
+    }
+  },
+  {
+    "student_id": "STU_0038",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 6.2,
+      "academic_consistency": 0.78,
+      "internship_count": 1,
+      "total_internship_duration_months": 3.3,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.53,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 7
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.47,
+      "historic_placement_rate_6m": 0.66,
+      "historic_placement_rate_12m": 0.76,
+      "historic_avg_salary": 310312,
+      "placement_cell_activity_level": 0.75,
+      "recruiter_participation_score": 0.68
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.6,
+      "region_job_density": 0.54,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.06,
+      "macroeconomic_condition_score": 0.66
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 11,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.49
+    }
+  },
+  {
+    "student_id": "STU_0039",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 7.0,
+      "academic_consistency": 0.61,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.1,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.9,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.65,
+      "historic_placement_rate_6m": 0.83,
+      "historic_placement_rate_12m": 0.95,
+      "historic_avg_salary": 422986,
+      "placement_cell_activity_level": 0.72,
+      "recruiter_participation_score": 0.71
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.49,
+      "region_job_density": 0.63,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.05,
+      "macroeconomic_condition_score": 0.52
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 9,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.66
+    }
+  },
+  {
+    "student_id": "STU_0040",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 7.4,
+      "academic_consistency": 0.67,
+      "internship_count": 1,
+      "total_internship_duration_months": 2.4,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.57,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.65,
+      "historic_placement_rate_6m": 0.83,
+      "historic_placement_rate_12m": 0.91,
+      "historic_avg_salary": 371592,
+      "placement_cell_activity_level": 0.73,
+      "recruiter_participation_score": 0.67
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.41,
+      "region_job_density": 0.6,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.6
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 15,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.38
+    }
+  },
+  {
+    "student_id": "STU_0041",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 4,
+      "semester": 6,
+      "cgpa": 6.5,
+      "academic_consistency": 0.68,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.1,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.78,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 6
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.36,
+      "historic_placement_rate_6m": 0.53,
+      "historic_placement_rate_12m": 0.59,
+      "historic_avg_salary": 674783,
+      "placement_cell_activity_level": 0.38,
+      "recruiter_participation_score": 0.34
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.69,
+      "region_job_density": 0.6,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.01,
+      "macroeconomic_condition_score": 0.56
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 19,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.36
+    }
+  },
+  {
+    "student_id": "STU_0042",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 9.4,
+      "academic_consistency": 0.87,
+      "internship_count": 2,
+      "total_internship_duration_months": 4.4,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.82,
+      "skill_certifications_count": 5,
+      "relevant_coursework_count": 15
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.82,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 634463,
+      "placement_cell_activity_level": 0.92,
+      "recruiter_participation_score": 0.85
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.91,
+      "region_job_density": 0.73,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.2,
+      "macroeconomic_condition_score": 0.73
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 39,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.45
+    }
+  },
+  {
+    "student_id": "STU_0043",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 6.1,
+      "academic_consistency": 0.28,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.5,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.71,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.36,
+      "historic_placement_rate_6m": 0.49,
+      "historic_placement_rate_12m": 0.61,
+      "historic_avg_salary": 482675,
+      "placement_cell_activity_level": 0.57,
+      "recruiter_participation_score": 0.6
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.26,
+      "region_job_density": 0.32,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": -0.19,
+      "macroeconomic_condition_score": 0.25
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 2,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.8
+    }
+  },
+  {
+    "student_id": "STU_0044",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 5.6,
+      "academic_consistency": 0.27,
+      "internship_count": 2,
+      "total_internship_duration_months": 0.6,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.6,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.79,
+      "historic_placement_rate_6m": 0.89,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 1201976,
+      "placement_cell_activity_level": 0.95,
+      "recruiter_participation_score": 0.88
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.28,
+      "region_job_density": 0.18,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": -0.18,
+      "macroeconomic_condition_score": 0.31
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 1,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.67
+    }
+  },
+  {
+    "student_id": "STU_0045",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 10,
+      "cgpa": 5.6,
+      "academic_consistency": 0.31,
+      "internship_count": 1,
+      "total_internship_duration_months": 0.0,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.73,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.41,
+      "historic_placement_rate_6m": 0.55,
+      "historic_placement_rate_12m": 0.66,
+      "historic_avg_salary": 291442,
+      "placement_cell_activity_level": 0.53,
+      "recruiter_participation_score": 0.41
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.19,
+      "region_job_density": 0.4,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.01,
+      "macroeconomic_condition_score": 0.53
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 4,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.23
+    }
+  },
+  {
+    "student_id": "STU_0046",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 3,
+      "semester": 9,
+      "cgpa": 7.4,
+      "academic_consistency": 0.71,
+      "internship_count": 1,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.64,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.42,
+      "historic_placement_rate_6m": 0.59,
+      "historic_placement_rate_12m": 0.7,
+      "historic_avg_salary": 705115,
+      "placement_cell_activity_level": 0.71,
+      "recruiter_participation_score": 0.69
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.5,
+      "region_job_density": 0.54,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.03,
+      "macroeconomic_condition_score": 0.55
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.62
+    }
+  },
+  {
+    "student_id": "STU_0047",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 9.0,
+      "academic_consistency": 0.95,
+      "internship_count": 3,
+      "total_internship_duration_months": 6.1,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.93,
+      "skill_certifications_count": 8,
+      "relevant_coursework_count": 14
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.67,
+      "historic_placement_rate_6m": 0.86,
+      "historic_placement_rate_12m": 0.96,
+      "historic_avg_salary": 599686,
+      "placement_cell_activity_level": 0.82,
+      "recruiter_participation_score": 0.73
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.83,
+      "region_job_density": 0.72,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.23,
+      "macroeconomic_condition_score": 0.77
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 23,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 8,
+      "institute_placement_progress": 0.83
+    }
+  },
+  {
+    "student_id": "STU_0048",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 8.7,
+      "academic_consistency": 0.92,
+      "internship_count": 5,
+      "total_internship_duration_months": 5.5,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.94,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 10
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.6,
+      "historic_placement_rate_6m": 0.77,
+      "historic_placement_rate_12m": 0.85,
+      "historic_avg_salary": 308610,
+      "placement_cell_activity_level": 0.78,
+      "recruiter_participation_score": 0.65
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.85,
+      "region_job_density": 0.6,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.28,
+      "macroeconomic_condition_score": 0.84
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.82
+    }
+  },
+  {
+    "student_id": "STU_0049",
+    "academic": {
+      "course_type": "Science",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 6.0,
+      "academic_consistency": 0.53,
+      "internship_count": 0,
+      "total_internship_duration_months": 1.1,
+      "internship_employer_type": null,
+      "internship_performance_score": null,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 3
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.64,
+      "historic_placement_rate_6m": 0.82,
+      "historic_placement_rate_12m": 0.93,
+      "historic_avg_salary": 523121,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.65
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.33,
+      "region_job_density": 0.2,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.34
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 9,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.66
+    }
+  },
+  {
+    "student_id": "STU_0050",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 5.9,
+      "academic_consistency": 0.58,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.9,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.67,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 1
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.37,
+      "historic_placement_rate_6m": 0.54,
+      "historic_placement_rate_12m": 0.6,
+      "historic_avg_salary": 531515,
+      "placement_cell_activity_level": 0.54,
+      "recruiter_participation_score": 0.53
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.34,
+      "region_job_density": 0.39,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": -0.09,
+      "macroeconomic_condition_score": 0.32
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 8,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.68
+    }
+  },
+  {
+    "student_id": "STU_0051",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 4,
+      "semester": 7,
+      "cgpa": 6.3,
+      "academic_consistency": 0.77,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.5,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.61,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.26,
+      "historic_placement_rate_6m": 0.44,
+      "historic_placement_rate_12m": 0.5,
+      "historic_avg_salary": 536628,
+      "placement_cell_activity_level": 0.46,
+      "recruiter_participation_score": 0.35
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.53,
+      "region_job_density": 0.43,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.58
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 9,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.37
+    }
+  },
+  {
+    "student_id": "STU_0052",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 7.0,
+      "academic_consistency": 0.59,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.9,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.52,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.5,
+      "historic_placement_rate_6m": 0.68,
+      "historic_placement_rate_12m": 0.75,
+      "historic_avg_salary": 919474,
+      "placement_cell_activity_level": 0.74,
+      "recruiter_participation_score": 0.63
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.54,
+      "region_job_density": 0.54,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 17,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.29
+    }
+  },
+  {
+    "student_id": "STU_0053",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 4,
+      "semester": 6,
+      "cgpa": 8.8,
+      "academic_consistency": 0.94,
+      "internship_count": 3,
+      "total_internship_duration_months": 3.8,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.8,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.86,
+      "historic_placement_rate_12m": 0.92,
+      "historic_avg_salary": 468700,
+      "placement_cell_activity_level": 0.91,
+      "recruiter_participation_score": 0.95
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.83,
+      "region_job_density": 0.75,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.74
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 40,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.37
+    }
+  },
+  {
+    "student_id": "STU_0054",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 6.7,
+      "academic_consistency": 0.73,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.62,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.48,
+      "historic_placement_rate_6m": 0.64,
+      "historic_placement_rate_12m": 0.72,
+      "historic_avg_salary": 575905,
+      "placement_cell_activity_level": 0.64,
+      "recruiter_participation_score": 0.5
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.53,
+      "region_job_density": 0.65,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": -0.01,
+      "macroeconomic_condition_score": 0.56
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 9,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.25
+    }
+  },
+  {
+    "student_id": "STU_0055",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 6.4,
+      "academic_consistency": 0.77,
+      "internship_count": 1,
+      "total_internship_duration_months": 3.3,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.68,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 6
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.66,
+      "historic_placement_rate_6m": 0.85,
+      "historic_placement_rate_12m": 0.9,
+      "historic_avg_salary": 410722,
+      "placement_cell_activity_level": 0.93,
+      "recruiter_participation_score": 0.95
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.44,
+      "region_job_density": 0.52,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.53
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 16,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.39
+    }
+  },
+  {
+    "student_id": "STU_0056",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 5,
+      "cgpa": 6.8,
+      "academic_consistency": 0.68,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.8,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.6,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.65,
+      "historic_placement_rate_6m": 0.84,
+      "historic_placement_rate_12m": 0.93,
+      "historic_avg_salary": 644439,
+      "placement_cell_activity_level": 0.78,
+      "recruiter_participation_score": 0.76
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.68,
+      "region_job_density": 0.61,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.0,
+      "macroeconomic_condition_score": 0.54
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 19,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.49
+    }
+  },
+  {
+    "student_id": "STU_0057",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 5.0,
+      "academic_consistency": 0.43,
+      "internship_count": 2,
+      "total_internship_duration_months": 0.8,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.92,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 3
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.63,
+      "historic_placement_rate_6m": 0.79,
+      "historic_placement_rate_12m": 0.91,
+      "historic_avg_salary": 522914,
+      "placement_cell_activity_level": 0.58,
+      "recruiter_participation_score": 0.48
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.26,
+      "region_job_density": 0.38,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": -0.08,
+      "macroeconomic_condition_score": 0.5
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 4,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.26
+    }
+  },
+  {
+    "student_id": "STU_0058",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 5,
+      "semester": 9,
+      "cgpa": 7.3,
+      "academic_consistency": 0.77,
+      "internship_count": 3,
+      "total_internship_duration_months": 3.7,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.8,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.81,
+      "historic_placement_rate_12m": 0.87,
+      "historic_avg_salary": 1221099,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.77
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.6,
+      "region_job_density": 0.53,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": -0.05,
+      "macroeconomic_condition_score": 0.56
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 11,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.59
+    }
+  },
+  {
+    "student_id": "STU_0059",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 5.6,
+      "academic_consistency": 0.34,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.2,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.53,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 3
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.3,
+      "historic_placement_rate_6m": 0.46,
+      "historic_placement_rate_12m": 0.56,
+      "historic_avg_salary": 592822,
+      "placement_cell_activity_level": 0.37,
+      "recruiter_participation_score": 0.3
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.38,
+      "region_job_density": 0.36,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.01,
+      "macroeconomic_condition_score": 0.45
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 4,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 1,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.84
+    }
+  },
+  {
+    "student_id": "STU_0060",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 7.0,
+      "academic_consistency": 0.57,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.6,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.52,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.67,
+      "historic_placement_rate_6m": 0.86,
+      "historic_placement_rate_12m": 0.92,
+      "historic_avg_salary": 620615,
+      "placement_cell_activity_level": 0.91,
+      "recruiter_participation_score": 0.88
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.5,
+      "region_job_density": 0.44,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.13,
+      "macroeconomic_condition_score": 0.5
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 10,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.54
+    }
+  },
+  {
+    "student_id": "STU_0061",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 8.4,
+      "academic_consistency": 0.89,
+      "internship_count": 4,
+      "total_internship_duration_months": 3.2,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.91,
+      "skill_certifications_count": 5,
+      "relevant_coursework_count": 12
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.76,
+      "historic_placement_rate_6m": 0.92,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 882913,
+      "placement_cell_activity_level": 0.76,
+      "recruiter_participation_score": 0.64
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.86,
+      "region_job_density": 0.74,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.26,
+      "macroeconomic_condition_score": 0.88
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 40,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.28
+    }
+  },
+  {
+    "student_id": "STU_0062",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 7.7,
+      "academic_consistency": 0.98,
+      "internship_count": 2,
+      "total_internship_duration_months": 4.7,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.85,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 13
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.78,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 406452,
+      "placement_cell_activity_level": 0.9,
+      "recruiter_participation_score": 0.94
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.67,
+      "region_job_density": 0.79,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.05,
+      "macroeconomic_condition_score": 0.76
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 30,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.48
+    }
+  },
+  {
+    "student_id": "STU_0063",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 8.5,
+      "academic_consistency": 0.81,
+      "internship_count": 3,
+      "total_internship_duration_months": 4.3,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.7,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 12
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.78,
+      "historic_placement_rate_6m": 0.92,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 432035,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.7
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.87,
+      "region_job_density": 0.7,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.89
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 19,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 8,
+      "institute_placement_progress": 0.58
+    }
+  },
+  {
+    "student_id": "STU_0064",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 4,
+      "semester": 7,
+      "cgpa": 6.3,
+      "academic_consistency": 0.72,
+      "internship_count": 2,
+      "total_internship_duration_months": 2.7,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.76,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.45,
+      "historic_placement_rate_6m": 0.56,
+      "historic_placement_rate_12m": 0.63,
+      "historic_avg_salary": 312207,
+      "placement_cell_activity_level": 0.62,
+      "recruiter_participation_score": 0.52
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.58,
+      "region_job_density": 0.56,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.03,
+      "macroeconomic_condition_score": 0.59
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 13,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.37
+    }
+  },
+  {
+    "student_id": "STU_0065",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 8.5,
+      "academic_consistency": 0.86,
+      "internship_count": 2,
+      "total_internship_duration_months": 6.0,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.94,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 13
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.54,
+      "historic_placement_rate_6m": 0.72,
+      "historic_placement_rate_12m": 0.78,
+      "historic_avg_salary": 453792,
+      "placement_cell_activity_level": 0.66,
+      "recruiter_participation_score": 0.57
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.83,
+      "region_job_density": 0.61,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.82
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 33,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.43
+    }
+  },
+  {
+    "student_id": "STU_0066",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 5,
+      "semester": 10,
+      "cgpa": 7.0,
+      "academic_consistency": 0.72,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.4,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.82,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.3,
+      "historic_placement_rate_6m": 0.44,
+      "historic_placement_rate_12m": 0.5,
+      "historic_avg_salary": 210191,
+      "placement_cell_activity_level": 0.48,
+      "recruiter_participation_score": 0.42
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.65,
+      "region_job_density": 0.46,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.06,
+      "macroeconomic_condition_score": 0.64
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 11,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.56
+    }
+  },
+  {
+    "student_id": "STU_0067",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 5,
+      "semester": 6,
+      "cgpa": 7.2,
+      "academic_consistency": 0.66,
+      "internship_count": 1,
+      "total_internship_duration_months": 2.2,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.81,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.74,
+      "historic_placement_rate_6m": 0.94,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 1121358,
+      "placement_cell_activity_level": 0.93,
+      "recruiter_participation_score": 0.93
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.44,
+      "region_job_density": 0.63,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.01,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 11,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.54
+    }
+  },
+  {
+    "student_id": "STU_0068",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 7,
+      "cgpa": 6.6,
+      "academic_consistency": 0.78,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.9,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.67,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.51,
+      "historic_placement_rate_6m": 0.63,
+      "historic_placement_rate_12m": 0.7,
+      "historic_avg_salary": 440699,
+      "placement_cell_activity_level": 0.65,
+      "recruiter_participation_score": 0.52
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.64,
+      "region_job_density": 0.43,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.08,
+      "macroeconomic_condition_score": 0.68
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 16,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.65
+    }
+  },
+  {
+    "student_id": "STU_0069",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 5,
+      "semester": 9,
+      "cgpa": 6.1,
+      "academic_consistency": 0.65,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.2,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.79,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.85,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 927789,
+      "placement_cell_activity_level": 0.83,
+      "recruiter_participation_score": 0.82
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.7,
+      "region_job_density": 0.52,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.01,
+      "macroeconomic_condition_score": 0.54
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 10,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.28
+    }
+  },
+  {
+    "student_id": "STU_0070",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 3,
+      "semester": 8,
+      "cgpa": 6.2,
+      "academic_consistency": 0.6,
+      "internship_count": 1,
+      "total_internship_duration_months": 2.9,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.67,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.23,
+      "historic_placement_rate_6m": 0.42,
+      "historic_placement_rate_12m": 0.49,
+      "historic_avg_salary": 209225,
+      "placement_cell_activity_level": 0.33,
+      "recruiter_participation_score": 0.36
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.47,
+      "region_job_density": 0.42,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.11,
+      "macroeconomic_condition_score": 0.68
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 12,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.58
+    }
+  },
+  {
+    "student_id": "STU_0071",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 5,
+      "semester": 6,
+      "cgpa": 7.8,
+      "academic_consistency": 0.78,
+      "internship_count": 2,
+      "total_internship_duration_months": 5.8,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.77,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 15
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.67,
+      "historic_placement_rate_6m": 0.77,
+      "historic_placement_rate_12m": 0.84,
+      "historic_avg_salary": 1244143,
+      "placement_cell_activity_level": 0.94,
+      "recruiter_participation_score": 0.87
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.86,
+      "region_job_density": 0.83,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.1,
+      "macroeconomic_condition_score": 0.8
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 38,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.27
+    }
+  },
+  {
+    "student_id": "STU_0072",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 5,
+      "semester": 7,
+      "cgpa": 6.1,
+      "academic_consistency": 0.37,
+      "internship_count": 2,
+      "total_internship_duration_months": 0.3,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.89,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 3
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.31,
+      "historic_placement_rate_6m": 0.41,
+      "historic_placement_rate_12m": 0.53,
+      "historic_avg_salary": 385811,
+      "placement_cell_activity_level": 0.51,
+      "recruiter_participation_score": 0.39
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.42,
+      "region_job_density": 0.38,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": -0.19,
+      "macroeconomic_condition_score": 0.44
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 7,
+      "interview_pipeline_stage": 0,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.26
+    }
+  },
+  {
+    "student_id": "STU_0073",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 9,
+      "cgpa": 7.1,
+      "academic_consistency": 0.56,
+      "internship_count": 2,
+      "total_internship_duration_months": 2.0,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.74,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.56,
+      "historic_placement_rate_6m": 0.74,
+      "historic_placement_rate_12m": 0.81,
+      "historic_avg_salary": 407083,
+      "placement_cell_activity_level": 0.56,
+      "recruiter_participation_score": 0.56
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.6,
+      "region_job_density": 0.43,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.14,
+      "macroeconomic_condition_score": 0.7
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 10,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.79
+    }
+  },
+  {
+    "student_id": "STU_0074",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 8.6,
+      "academic_consistency": 0.81,
+      "internship_count": 3,
+      "total_internship_duration_months": 6.6,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.55,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 12
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.65,
+      "historic_placement_rate_6m": 0.83,
+      "historic_placement_rate_12m": 0.92,
+      "historic_avg_salary": 566694,
+      "placement_cell_activity_level": 0.9,
+      "recruiter_participation_score": 0.86
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.8,
+      "region_job_density": 0.68,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.32,
+      "macroeconomic_condition_score": 0.66
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 35,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.55
+    }
+  },
+  {
+    "student_id": "STU_0075",
+    "academic": {
+      "course_type": "Pharmacy",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 6.1,
+      "academic_consistency": 0.76,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.9,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.55,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.55,
+      "historic_placement_rate_6m": 0.74,
+      "historic_placement_rate_12m": 0.79,
+      "historic_avg_salary": 328817,
+      "placement_cell_activity_level": 0.59,
+      "recruiter_participation_score": 0.63
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.41,
+      "region_job_density": 0.63,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.67
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.35
+    }
+  },
+  {
+    "student_id": "STU_0076",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 6.4,
+      "academic_consistency": 0.73,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.9,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.9,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.82,
+      "historic_placement_rate_6m": 0.92,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 961251,
+      "placement_cell_activity_level": 0.91,
+      "recruiter_participation_score": 0.85
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.52,
+      "region_job_density": 0.6,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.51
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.42
+    }
+  },
+  {
+    "student_id": "STU_0077",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 5.2,
+      "academic_consistency": 0.45,
+      "internship_count": 1,
+      "total_internship_duration_months": 1.3,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.88,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.44,
+      "historic_placement_rate_6m": 0.57,
+      "historic_placement_rate_12m": 0.62,
+      "historic_avg_salary": 238784,
+      "placement_cell_activity_level": 0.52,
+      "recruiter_participation_score": 0.52
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.17,
+      "region_job_density": 0.39,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": -0.01,
+      "macroeconomic_condition_score": 0.37
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 4,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.34
+    }
+  },
+  {
+    "student_id": "STU_0078",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 6,
+      "cgpa": 6.1,
+      "academic_consistency": 0.59,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.5,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.82,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.21,
+      "historic_placement_rate_6m": 0.39,
+      "historic_placement_rate_12m": 0.51,
+      "historic_avg_salary": 338550,
+      "placement_cell_activity_level": 0.53,
+      "recruiter_participation_score": 0.46
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.37,
+      "region_job_density": 0.26,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": -0.17,
+      "macroeconomic_condition_score": 0.41
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 2,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 0,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.34
+    }
+  },
+  {
+    "student_id": "STU_0079",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 3,
+      "semester": 10,
+      "cgpa": 7.2,
+      "academic_consistency": 0.74,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.2,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.94,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.22,
+      "historic_placement_rate_6m": 0.35,
+      "historic_placement_rate_12m": 0.47,
+      "historic_avg_salary": 377861,
+      "placement_cell_activity_level": 0.55,
+      "recruiter_participation_score": 0.42
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.61,
+      "region_job_density": 0.45,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": 0.04,
+      "macroeconomic_condition_score": 0.55
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 13,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.71
+    }
+  },
+  {
+    "student_id": "STU_0080",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 5,
+      "semester": 10,
+      "cgpa": 6.8,
+      "academic_consistency": 0.69,
+      "internship_count": 3,
+      "total_internship_duration_months": 1.4,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.77,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 5
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.52,
+      "historic_placement_rate_6m": 0.62,
+      "historic_placement_rate_12m": 0.69,
+      "historic_avg_salary": 504802,
+      "placement_cell_activity_level": 0.65,
+      "recruiter_participation_score": 0.56
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.52,
+      "region_job_density": 0.55,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 16,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.83
+    }
+  },
+  {
+    "student_id": "STU_0081",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 4,
+      "semester": 5,
+      "cgpa": 6.4,
+      "academic_consistency": 0.69,
+      "internship_count": 2,
+      "total_internship_duration_months": 1.2,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.52,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 6
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.74,
+      "historic_placement_rate_6m": 0.89,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 694199,
+      "placement_cell_activity_level": 0.93,
+      "recruiter_participation_score": 0.94
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.57,
+      "region_job_density": 0.43,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.67
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 12,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.35
+    }
+  },
+  {
+    "student_id": "STU_0082",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 9.5,
+      "academic_consistency": 0.94,
+      "internship_count": 2,
+      "total_internship_duration_months": 7.6,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.57,
+      "skill_certifications_count": 4,
+      "relevant_coursework_count": 10
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.88,
+      "historic_placement_rate_12m": 0.96,
+      "historic_avg_salary": 732273,
+      "placement_cell_activity_level": 0.94,
+      "recruiter_participation_score": 0.95
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.77,
+      "region_job_density": 0.74,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.31,
+      "macroeconomic_condition_score": 0.88
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.34
+    }
+  },
+  {
+    "student_id": "STU_0083",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 4,
+      "semester": 5,
+      "cgpa": 8.6,
+      "academic_consistency": 0.92,
+      "internship_count": 3,
+      "total_internship_duration_months": 6.6,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.61,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 13
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.7,
+      "historic_placement_rate_6m": 0.82,
+      "historic_placement_rate_12m": 0.87,
+      "historic_avg_salary": 834240,
+      "placement_cell_activity_level": 0.8,
+      "recruiter_participation_score": 0.83
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.78,
+      "region_job_density": 0.76,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.09,
+      "macroeconomic_condition_score": 0.71
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 25,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 7,
+      "skill_up_events_count": 7,
+      "institute_placement_progress": 0.34
+    }
+  },
+  {
+    "student_id": "STU_0084",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 8.2,
+      "academic_consistency": 0.91,
+      "internship_count": 4,
+      "total_internship_duration_months": 6.3,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.75,
+      "skill_certifications_count": 6,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.52,
+      "historic_placement_rate_6m": 0.63,
+      "historic_placement_rate_12m": 0.72,
+      "historic_avg_salary": 761316,
+      "placement_cell_activity_level": 0.67,
+      "recruiter_participation_score": 0.61
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.79,
+      "region_job_density": 0.69,
+      "sector_hiring_trend": "Education",
+      "sector_hiring_growth": 0.15,
+      "macroeconomic_condition_score": 0.89
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 27,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 7,
+      "institute_placement_progress": 0.48
+    }
+  },
+  {
+    "student_id": "STU_0085",
+    "academic": {
+      "course_type": "Science",
+      "current_year": 3,
+      "semester": 7,
+      "cgpa": 7.6,
+      "academic_consistency": 0.89,
+      "internship_count": 5,
+      "total_internship_duration_months": 7.2,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.84,
+      "skill_certifications_count": 5,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.63,
+      "historic_placement_rate_6m": 0.79,
+      "historic_placement_rate_12m": 0.86,
+      "historic_avg_salary": 385205,
+      "placement_cell_activity_level": 0.69,
+      "recruiter_participation_score": 0.69
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.83,
+      "region_job_density": 0.71,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.24,
+      "macroeconomic_condition_score": 0.81
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 36,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.33
+    }
+  },
+  {
+    "student_id": "STU_0086",
+    "academic": {
+      "course_type": "Law",
+      "current_year": 5,
+      "semester": 10,
+      "cgpa": 9.0,
+      "academic_consistency": 0.87,
+      "internship_count": 5,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "MNC",
+      "internship_performance_score": 0.77,
+      "skill_certifications_count": 5,
+      "relevant_coursework_count": 13
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.5,
+      "historic_placement_rate_6m": 0.65,
+      "historic_placement_rate_12m": 0.76,
+      "historic_avg_salary": 431928,
+      "placement_cell_activity_level": 0.64,
+      "recruiter_participation_score": 0.62
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.82,
+      "region_job_density": 0.81,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.06,
+      "macroeconomic_condition_score": 0.71
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 24,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.55
+    }
+  },
+  {
+    "student_id": "STU_0087",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 9,
+      "cgpa": 8.1,
+      "academic_consistency": 0.76,
+      "internship_count": 5,
+      "total_internship_duration_months": 5.5,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.92,
+      "skill_certifications_count": 7,
+      "relevant_coursework_count": 10
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.84,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 442255,
+      "placement_cell_activity_level": 0.77,
+      "recruiter_participation_score": 0.75
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.67,
+      "region_job_density": 0.75,
+      "sector_hiring_trend": "Healthcare",
+      "sector_hiring_growth": 0.31,
+      "macroeconomic_condition_score": 0.67
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 17,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 6,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.64
+    }
+  },
+  {
+    "student_id": "STU_0088",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 4.1,
+      "academic_consistency": 0.4,
+      "internship_count": 2,
+      "total_internship_duration_months": 0.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.78,
+      "skill_certifications_count": 0,
+      "relevant_coursework_count": 2
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.28,
+      "historic_placement_rate_6m": 0.39,
+      "historic_placement_rate_12m": 0.49,
+      "historic_avg_salary": 275945,
+      "placement_cell_activity_level": 0.39,
+      "recruiter_participation_score": 0.25
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.3,
+      "region_job_density": 0.24,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.0,
+      "macroeconomic_condition_score": 0.47
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 5,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 0,
+      "institute_placement_progress": 0.56
+    }
+  },
+  {
+    "student_id": "STU_0089",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 7,
+      "cgpa": 9.4,
+      "academic_consistency": 0.91,
+      "internship_count": 3,
+      "total_internship_duration_months": 6.4,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.69,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 11
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.75,
+      "historic_placement_rate_6m": 0.94,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 500008,
+      "placement_cell_activity_level": 0.78,
+      "recruiter_participation_score": 0.78
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.9,
+      "region_job_density": 0.84,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.17,
+      "macroeconomic_condition_score": 0.67
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 33,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 8,
+      "institute_placement_progress": 0.44
+    }
+  },
+  {
+    "student_id": "STU_0090",
+    "academic": {
+      "course_type": "MBA",
+      "current_year": 3,
+      "semester": 10,
+      "cgpa": 8.8,
+      "academic_consistency": 0.86,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.0,
+      "internship_employer_type": "Government",
+      "internship_performance_score": 0.63,
+      "skill_certifications_count": 7,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.68,
+      "historic_placement_rate_6m": 0.86,
+      "historic_placement_rate_12m": 0.96,
+      "historic_avg_salary": 1058174,
+      "placement_cell_activity_level": 0.95,
+      "recruiter_participation_score": 0.93
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.67,
+      "region_job_density": 0.66,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": 0.13,
+      "macroeconomic_condition_score": 0.88
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 17,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 5,
+      "institute_placement_progress": 0.81
+    }
+  },
+  {
+    "student_id": "STU_0091",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 7.1,
+      "academic_consistency": 0.68,
+      "internship_count": 1,
+      "total_internship_duration_months": 3.0,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.86,
+      "skill_certifications_count": 3,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.59,
+      "historic_placement_rate_6m": 0.73,
+      "historic_placement_rate_12m": 0.82,
+      "historic_avg_salary": 499215,
+      "placement_cell_activity_level": 0.71,
+      "recruiter_participation_score": 0.62
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.41,
+      "region_job_density": 0.62,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": -0.03,
+      "macroeconomic_condition_score": 0.69
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 4,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.39
+    }
+  },
+  {
+    "student_id": "STU_0092",
+    "academic": {
+      "course_type": "Commerce",
+      "current_year": 5,
+      "semester": 6,
+      "cgpa": 7.7,
+      "academic_consistency": 0.8,
+      "internship_count": 3,
+      "total_internship_duration_months": 4.5,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.6,
+      "skill_certifications_count": 7,
+      "relevant_coursework_count": 13
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.47,
+      "historic_placement_rate_6m": 0.6,
+      "historic_placement_rate_12m": 0.66,
+      "historic_avg_salary": 388516,
+      "placement_cell_activity_level": 0.58,
+      "recruiter_participation_score": 0.54
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.79,
+      "region_job_density": 0.76,
+      "sector_hiring_trend": "Energy",
+      "sector_hiring_growth": 0.18,
+      "macroeconomic_condition_score": 0.84
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 25,
+      "interview_pipeline_stage": 4,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 6,
+      "institute_placement_progress": 0.38
+    }
+  },
+  {
+    "student_id": "STU_0093",
+    "academic": {
+      "course_type": "Arts",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 5.6,
+      "academic_consistency": 0.33,
+      "internship_count": 2,
+      "total_internship_duration_months": 0.3,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.57,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 4
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.21,
+      "historic_placement_rate_6m": 0.41,
+      "historic_placement_rate_12m": 0.51,
+      "historic_avg_salary": 242791,
+      "placement_cell_activity_level": 0.48,
+      "recruiter_participation_score": 0.51
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.17,
+      "region_job_density": 0.45,
+      "sector_hiring_trend": "IT",
+      "sector_hiring_growth": -0.08,
+      "macroeconomic_condition_score": 0.37
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 8,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.57
+    }
+  },
+  {
+    "student_id": "STU_0094",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 7,
+      "cgpa": 6.3,
+      "academic_consistency": 0.76,
+      "internship_count": 2,
+      "total_internship_duration_months": 3.4,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.86,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 9
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.27,
+      "historic_placement_rate_6m": 0.47,
+      "historic_placement_rate_12m": 0.56,
+      "historic_avg_salary": 348295,
+      "placement_cell_activity_level": 0.58,
+      "recruiter_participation_score": 0.6
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.69,
+      "region_job_density": 0.63,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.13,
+      "macroeconomic_condition_score": 0.5
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 17,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 3,
+      "institute_placement_progress": 0.31
+    }
+  },
+  {
+    "student_id": "STU_0095",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 3,
+      "semester": 10,
+      "cgpa": 7.5,
+      "academic_consistency": 0.69,
+      "internship_count": 3,
+      "total_internship_duration_months": 2.2,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.95,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 7
+    },
+    "institute": {
+      "institute_tier": "Tier-3",
+      "historic_placement_rate_3m": 0.23,
+      "historic_placement_rate_6m": 0.42,
+      "historic_placement_rate_12m": 0.49,
+      "historic_avg_salary": 410008,
+      "placement_cell_activity_level": 0.45,
+      "recruiter_participation_score": 0.33
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.67,
+      "region_job_density": 0.54,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": -0.01,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 16,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 2,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.44
+    }
+  },
+  {
+    "student_id": "STU_0096",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 4,
+      "semester": 10,
+      "cgpa": 7.8,
+      "academic_consistency": 0.61,
+      "internship_count": 1,
+      "total_internship_duration_months": 2.1,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.87,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 6
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.49,
+      "historic_placement_rate_6m": 0.62,
+      "historic_placement_rate_12m": 0.71,
+      "historic_avg_salary": 399557,
+      "placement_cell_activity_level": 0.72,
+      "recruiter_participation_score": 0.77
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.47,
+      "region_job_density": 0.56,
+      "sector_hiring_trend": "BFSI",
+      "sector_hiring_growth": -0.03,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 3,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.67
+    }
+  },
+  {
+    "student_id": "STU_0097",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 7.7,
+      "academic_consistency": 0.58,
+      "internship_count": 3,
+      "total_internship_duration_months": 3.7,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.83,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.62,
+      "historic_placement_rate_6m": 0.76,
+      "historic_placement_rate_12m": 0.81,
+      "historic_avg_salary": 294791,
+      "placement_cell_activity_level": 0.65,
+      "recruiter_participation_score": 0.61
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.56,
+      "region_job_density": 0.44,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.12,
+      "macroeconomic_condition_score": 0.59
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 18,
+      "interview_pipeline_stage": 1,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.37
+    }
+  },
+  {
+    "student_id": "STU_0098",
+    "academic": {
+      "course_type": "Engineering",
+      "current_year": 4,
+      "semester": 8,
+      "cgpa": 7.2,
+      "academic_consistency": 0.69,
+      "internship_count": 1,
+      "total_internship_duration_months": 3.2,
+      "internship_employer_type": "Startup",
+      "internship_performance_score": 0.85,
+      "skill_certifications_count": 1,
+      "relevant_coursework_count": 7
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.76,
+      "historic_placement_rate_6m": 0.89,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 682648,
+      "placement_cell_activity_level": 0.92,
+      "recruiter_participation_score": 0.84
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.51,
+      "region_job_density": 0.58,
+      "sector_hiring_trend": "Telecom",
+      "sector_hiring_growth": 0.14,
+      "macroeconomic_condition_score": 0.62
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 20,
+      "interview_pipeline_stage": 3,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 2,
+      "institute_placement_progress": 0.53
+    }
+  },
+  {
+    "student_id": "STU_0099",
+    "academic": {
+      "course_type": "Medical",
+      "current_year": 3,
+      "semester": 6,
+      "cgpa": 8.5,
+      "academic_consistency": 0.94,
+      "internship_count": 5,
+      "total_internship_duration_months": 7.5,
+      "internship_employer_type": "Large Corporate",
+      "internship_performance_score": 0.67,
+      "skill_certifications_count": 8,
+      "relevant_coursework_count": 15
+    },
+    "institute": {
+      "institute_tier": "Tier-2",
+      "historic_placement_rate_3m": 0.47,
+      "historic_placement_rate_6m": 0.58,
+      "historic_placement_rate_12m": 0.65,
+      "historic_avg_salary": 685857,
+      "placement_cell_activity_level": 0.63,
+      "recruiter_participation_score": 0.59
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.79,
+      "region_job_density": 0.83,
+      "sector_hiring_trend": "Manufacturing",
+      "sector_hiring_growth": 0.3,
+      "macroeconomic_condition_score": 0.72
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 39,
+      "interview_pipeline_stage": 5,
+      "resume_updates_count": 8,
+      "skill_up_events_count": 4,
+      "institute_placement_progress": 0.66
+    }
+  },
+  {
+    "student_id": "STU_0100",
+    "academic": {
+      "course_type": "Nursing",
+      "current_year": 3,
+      "semester": 5,
+      "cgpa": 6.2,
+      "academic_consistency": 0.65,
+      "internship_count": 3,
+      "total_internship_duration_months": 3.2,
+      "internship_employer_type": "Mid-size",
+      "internship_performance_score": 0.88,
+      "skill_certifications_count": 2,
+      "relevant_coursework_count": 8
+    },
+    "institute": {
+      "institute_tier": "Tier-1",
+      "historic_placement_rate_3m": 0.84,
+      "historic_placement_rate_6m": 0.95,
+      "historic_placement_rate_12m": 0.98,
+      "historic_avg_salary": 506362,
+      "placement_cell_activity_level": 0.79,
+      "recruiter_participation_score": 0.77
+    },
+    "labor_market": {
+      "field_job_demand_score": 0.42,
+      "region_job_density": 0.64,
+      "sector_hiring_trend": "Retail",
+      "sector_hiring_growth": 0.06,
+      "macroeconomic_condition_score": 0.63
+    },
+    "real_time_signals": {
+      "job_portal_applications_count": 14,
+      "interview_pipeline_stage": 2,
+      "resume_updates_count": 5,
+      "skill_up_events_count": 1,
+      "institute_placement_progress": 0.27
+    }
+  }
+]
