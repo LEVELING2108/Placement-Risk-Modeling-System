@@ -143,7 +143,8 @@ class PredictionService:
         recommendations = Recommendation(
             summary=ai_recommendations.get("summary", ""),
             next_best_actions=ai_recommendations.get("next_best_actions", []),
-            recruiter_matches=recruiter_matches[:5]
+            recruiter_matches=recruiter_matches[:5],
+            is_ai_generated=ai_recommendations.get("is_ai_generated", False)
         )
         
         response = StudentPredictionResponse(

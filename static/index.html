@@ -449,7 +449,7 @@
                         <div class="col-md-4">
                             <div class="card border-1"><div class="card-body text-center">
                                 <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i><h5>Summary Statistics</h5><p class="text-muted">Overview of key metrics</p>
-                                <button class="btn-primary-custom" onclick="loadDashboard()">View</button>
+                                <button class="btn-primary-custom" onclick="viewDashboard()">View</button>
                             </div></div>
                         </div>
                     </div>
@@ -593,13 +593,15 @@
         // --- Simulator Logic ---
         
         async function loadSimulator() {
+            console.log("Loading simulator data...");
             const res = await authFetch('/api/v1/portfolio');
             const data = await res.json();
-            const students = data.students || [];
+            allStudents = data.students || []; // Update global allStudents
+            console.log("Simulator students loaded:", allStudents.length);
             
             const selector = document.getElementById('sim-student-selector');
             selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
-                students.map(s => `<option value="${s.student_id}">${s.student_id} (${getAcademic(s).course_type})</option>`).join('');
+                allStudents.map(s => `<option value="${s.student_id}">${s.student_id} (${getAcademic(s).course_type || 'N/A'})</option>`).join('');
         }
 
         function loadStudentToSim() {
@@ -677,6 +679,83 @@
             return pred.placement_prediction || {};
         }
 
+        function viewStudent(id) {
+            console.log("Viewing student:", id);
+            // Use loose equality == to handle string vs number IDs
+            const student = allStudents.find(s => s.student_id == id);
+            
+            if (!student) {
+                console.error("Student not found in allStudents. Current count:", allStudents.length);
+                alert('Student data not found. Please refresh the dashboard.');
+                return;
+            }
+            
+            // Switch to predict page
+            navigateTo('predict');
+            
+            // Extract the result object
+            const result = student.prediction || student;
+            console.log("Found student data:", result);
+            
+            // Small delay to allow navigateTo to finish rendering
+            setTimeout(() => {
+                displayPrediction(result);
+                document.getElementById('prediction-result').scrollIntoView({ behavior: 'smooth' });
+            }, 50);
+        }
+
+        function showPredictModal() { 
+            document.getElementById('predict-modal').style.display = 'flex'; 
+        }
+        
+        function hidePredictModal() { 
+            document.getElementById('predict-modal').style.display = 'none'; 
+        }
+
+        document.getElementById('quick-predict-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            const data = {
+                student_id: f.student_id.value || 'STU_' + Date.now(),
+                academic: {
+                    course_type: f.course_type.value, current_year: 4, semester: 8,
+                    cgpa: parseFloat(f.cgpa.value), academic_consistency: 0.75,
+                    internship_count: parseInt(f.internship_count.value),
+                    total_internship_duration_months: 4,
+                    skill_certifications_count: 2, relevant_coursework_count: 5
+                },
+                institute: {
+                    institute_tier: f.institute_tier.value,
+                    historic_placement_rate_3m: 0.55, historic_placement_rate_6m: 0.75,
+                    historic_placement_rate_12m: 0.90, historic_avg_salary: 500000,
+                    placement_cell_activity_level: 0.7, recruiter_participation_score: 0.65
+                },
+                labor_market: {
+                    field_job_demand_score: 0.7, region_job_density: 0.6,
+                    sector_hiring_trend: 'IT', sector_hiring_growth: 0.15,
+                    macroeconomic_condition_score: 0.75
+                },
+                real_time_signals: {
+                    job_portal_applications_count: 15, interview_pipeline_stage: 2,
+                    resume_updates_count: 3, skill_up_events_count: 2, institute_placement_progress: 0.6
+                }
+            };
+
+            try {
+                const response = await authFetch('/api/v1/predict', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                hidePredictModal();
+                loadDashboard();
+                // Switch to predict page and show details
+                viewStudent(result.student_id);
+            } catch (err) {
+                alert('Prediction failed: ' + err.message);
+            }
+        });
+
         async function loadDashboard() {
             try {
                 const statsRes = await authFetch('/api/v1/portfolio/stats');
@@ -736,6 +815,11 @@
             }
         }
 
+        function viewDashboard() {
+            navigateTo('dashboard');
+            loadDashboard();
+        }
+
         async function loadPortfolio() {
             try {
                 const portRes = await authFetch('/api/v1/portfolio');
@@ -769,6 +853,56 @@
             } catch (err) {
                 console.error('Error loading portfolio:', err);
             }
+        }
+
+        async function exportCSV() {
+            if (allStudents.length === 0) {
+                // Try to reload if empty
+                const res = await authFetch('/api/v1/portfolio');
+                const data = await res.json();
+                allStudents = data.students || [];
+            }
+
+            if (allStudents.length === 0) {
+                alert('No data to export. Please run some predictions or batch analysis first.');
+                return;
+            }
+            
+            const headers = ['Student ID', 'Course', 'CGPA', 'Tier', 'Internships', 'Timeline', 'Salary', 'Risk Level', 'Risk Score'];
+            const rows = allStudents.map(s => {
+                const academic = getAcademic(s);
+                const institute = getInstitute(s);
+                const risk = getRiskAssessment(s);
+                const salary = getSalaryPrediction(s);
+                const placement = getPlacementPrediction(s);
+                return [
+                    s.student_id,
+                    academic.course_type || '',
+                    academic.cgpa || '',
+                    institute.institute_tier || '',
+                    academic.internship_count || 0,
+                    placement.predicted_timeline || '',
+                    salary.expected_salary_avg || '',
+                    risk.risk_level || '',
+                    risk.placement_risk_score || ''
+                ].join(',');
+            });
+
+            const csvContent = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `PlacementRisk_Export_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function exportPortfolio() {
+            // Re-uses the CSV export logic but can be extended for PDF in the future
+            exportCSV();
         }
 
         async function loadAnalytics() {
@@ -915,42 +1049,101 @@
         // --- SHAP Chart Logic ---
 
         function renderShapChart(scores) {
-            if (!scores || Object.keys(scores).length === 0) return;
+            console.log("Rendering SHAP Chart with data:", scores);
+            if (!scores || Object.keys(scores).length === 0) {
+                console.warn("No SHAP scores to render");
+                return;
+            }
             
-            const ctx = document.getElementById('shap-chart').getContext('2d');
-            
-            if (charts.shap) charts.shap.destroy();
-            
-            const sortedEntries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-            const labels = sortedEntries.map(e => e[0].replace(/_/g, ' '));
-            const values = sortedEntries.map(e => e[1]);
-            
-            charts.shap = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Feature Contribution (Impact on Placement)',
-                        data: values,
-                        backgroundColor: values.map(v => v > 0 ? '#10b981' : '#ef4444'),
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+            // Small delay to ensure DOM is ready and element is visible
+            setTimeout(() => {
+                const canvas = document.getElementById('shap-chart');
+                if (!canvas) {
+                    console.error("SHAP chart canvas not found");
+                    return;
+                }
+                const ctx = canvas.getContext('2d');
+                
+                if (charts.shap) charts.shap.destroy();
+                
+                const sortedEntries = Object.entries(scores).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+                const labels = sortedEntries.map(e => e[0].replace(/_/g, ' '));
+                const values = sortedEntries.map(e => e[1]);
+                
+                charts.shap = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Impact on Placement Probability',
+                            data: values,
+                            backgroundColor: values.map(v => v > 0 ? '#10b981' : '#ef4444'),
+                            borderRadius: 4
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: { drawBorder: false },
-                            title: { display: true, text: 'Contribution' }
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return (context.raw > 0 ? '+' : '') + (context.raw * 100).toFixed(2) + '% impact';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { drawBorder: false },
+                                title: { display: true, text: 'Contribution Score' }
+                            }
                         }
                     }
-                }
-            });
+                });
+            }, 100);
+        }
+
+        function displaySimulation(result) {
+            document.getElementById('sim-empty-state').style.display = 'none';
+            document.getElementById('simulation-comparison').style.display = 'block';
+            
+            const original = result.original_prediction;
+            const simulated = result.simulated_prediction;
+            
+            const renderProfile = (pred) => {
+                const risk = pred.risk_assessment;
+                const placement = pred.placement_prediction;
+                const riskClass = (risk.risk_level || 'Low').toLowerCase();
+                return `
+                    <div class="mb-3 text-center">
+                        <span class="badge-risk badge-${riskClass}">${risk.risk_level}</span>
+                        <h2 class="mt-2">${(risk.placement_risk_score * 100).toFixed(1)}%</h2>
+                        <small class="text-muted">Risk Score</small>
+                    </div>
+                    <hr>
+                    <p><strong>Timeline:</strong> ${placement.predicted_timeline}</p>
+                    <p><strong>6m Prob:</strong> ${(placement.probability_6_months * 100).toFixed(1)}%</p>
+                    <p><strong>Salary:</strong> ₹${(pred.salary_prediction.expected_salary_avg / 100000).toFixed(2)}L</p>
+                `;
+            };
+            
+            document.getElementById('sim-original-content').innerHTML = renderProfile(original);
+            document.getElementById('sim-modified-content').innerHTML = renderProfile(simulated);
+            
+            document.getElementById('sim-impact-summary').textContent = result.impact_summary;
+            
+            const deltaRisk = result.delta_risk_score;
+            const riskElem = document.getElementById('sim-delta-risk');
+            riskElem.textContent = (deltaRisk > 0 ? '+' : '') + (deltaRisk * 100).toFixed(1) + '%';
+            riskElem.className = deltaRisk > 0 ? 'text-danger fw-bold' : 'text-success fw-bold';
+            
+            const deltaProb = result.delta_placement_probability_6m;
+            const probElem = document.getElementById('sim-delta-prob');
+            probElem.textContent = (deltaProb > 0 ? '+' : '') + (deltaProb * 100).toFixed(1) + '%';
+            probElem.className = deltaProb > 0 ? 'text-success fw-bold' : 'text-danger fw-bold';
         }
 
         function displayPrediction(result) {

@@ -64,34 +64,36 @@ class PlacementPredictionModel:
     def get_shap_explanations(self, X: pd.DataFrame) -> Dict[str, float]:
         """
         Get SHAP explanations for a single instance using the ensemble
-        
-        Args:
-            X: Input features (single row)
-            
-        Returns:
-            Dictionary of feature names and their SHAP contribution values
         """
         import shap
         
         if not self.is_trained:
             raise ValueError("Model must be trained first")
             
-        # For simplicity and performance, we'll use the 6m Random Forest model 
-        # as a proxy for the entire ensemble's behavior
+        # Use the 6m Random Forest model as a proxy
         model = self.models['6m']['random_forest']
         
         if self._explainer is None:
             self._explainer = shap.TreeExplainer(model)
             
+        # TreeExplainer.shap_values for classification returns a 3D array 
+        # of shape (samples, features, classes) or a list of 2D arrays.
         shap_values = self._explainer.shap_values(X)
         
-        # shap_values for classification is a list [neg_class_probs, pos_class_probs]
-        # or just an array for regression. For RF classifier, it's a list.
-        if isinstance(shap_values, list):
-            # Index 1 is the positive class (placed)
-            contributions = shap_values[1][0]
-        else:
-            contributions = shap_values[0]
+        try:
+            if isinstance(shap_values, list):
+                # Many sklearn versions return a list [neg_class_shap, pos_class_shap]
+                # Each element is (samples, features)
+                contributions = shap_values[1][0]
+            elif len(shap_values.shape) == 3:
+                # Shape (samples, features, classes) -> take sample 0, all features, class 1
+                contributions = shap_values[0, :, 1]
+            else:
+                # Fallback to first element if it's 2D (regression style)
+                contributions = shap_values[0]
+        except Exception as e:
+            print(f"SHAP Indexing error: {e}, shape was {getattr(shap_values, 'shape', 'list')}")
+            return {}
             
         return dict(zip(self.feature_names, contributions))
     

@@ -67,7 +67,7 @@ async def predict_placement(
     try:
         response = prediction_service.predict_single(request)
         
-        # Store in tenant's portfolio
+        # Store in tenant's portfolio with FULL data for simulator
         if tenant_id not in portfolio_store:
             portfolio_store[tenant_id] = {}
             
@@ -76,6 +76,7 @@ async def predict_placement(
             "academic": request.academic.model_dump(),
             "institute": request.institute.model_dump(),
             "labor_market": request.labor_market.model_dump(),
+            "real_time_signals": request.real_time_signals.model_dump() if request.real_time_signals else {},
             "prediction": response.model_dump(),
             "timestamp": datetime.now().isoformat()
         }
@@ -102,15 +103,20 @@ async def batch_predict(
         if tenant_id not in portfolio_store:
             portfolio_store[tenant_id] = {}
             
-        for result in results:
-            # Note: We need the full input data here to match the portfolio structure,
-            # but for simplicity in batch we'll just store the prediction if input isn't fully available
-            # In a real app, you'd map back to the original request objects
-            portfolio_store[tenant_id][result.student_id] = {
-                "student_id": result.student_id,
-                "prediction": result.model_dump() if hasattr(result, 'model_dump') else result,
-                "timestamp": datetime.now().isoformat()
-            }
+        # Map requests to results to save full profiles
+        results_map = {r.student_id: r for r in results}
+        for stu_req in students:
+            if stu_req.student_id in results_map:
+                res = results_map[stu_req.student_id]
+                portfolio_store[tenant_id][stu_req.student_id] = {
+                    "student_id": stu_req.student_id,
+                    "academic": stu_req.academic.model_dump(),
+                    "institute": stu_req.institute.model_dump(),
+                    "labor_market": stu_req.labor_market.model_dump(),
+                    "real_time_signals": stu_req.real_time_signals.model_dump() if stu_req.real_time_signals else {},
+                    "prediction": res.model_dump(),
+                    "timestamp": datetime.now().isoformat()
+                }
         
         save_portfolio()
         
