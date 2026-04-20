@@ -96,7 +96,7 @@ async def batch_predict(
     tenant_id = current_user["tenant_id"]
     try:
         students = request.students[:request.max_batch_size]
-        results = prediction_service.predict_batch(students)
+        results = prediction_service.predict_batch(students, tenant_id=tenant_id, db=db)
         
         results_map = {r.student_id: r for r in results}
         
@@ -146,14 +146,16 @@ async def batch_predict(
 @router.post("/simulate", response_model=SimulationResponse)
 async def simulate_impact(
     request: SimulationRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """
     Simulate what-if scenarios (Transient, not saved to DB)
     """
+    tenant_id = current_user["tenant_id"]
     try:
-        original = prediction_service.predict_single(request.base_data)
-        simulated = prediction_service.simulate(request.base_data, request.modifications)
+        original = prediction_service.predict_single(request.base_data, tenant_id=tenant_id, db=db)
+        simulated = prediction_service.simulate(request.base_data, request.modifications, tenant_id=tenant_id, db=db)
         
         delta_risk = simulated.risk_assessment.placement_risk_score - original.risk_assessment.placement_risk_score
         delta_prob = simulated.placement_prediction.probability_6_months - original.placement_prediction.probability_6_months
@@ -391,6 +393,7 @@ async def upload_portfolio_csv(
         # Basic mapping of CSV columns to StudentPredictionRequest
         # We expect columns like: student_id, course_type, cgpa, internship_count, institute_tier, placement_rate_3m, etc.
         students_to_process = []
+        failed_rows = 0
         for _, row in df.iterrows():
             try:
                 # Create a request object from the row (with defaults for missing fields)
@@ -410,24 +413,34 @@ async def upload_portfolio_csv(
                     institute=InstituteData(
                         institute_tier=row.get('institute_tier', 'Tier-2'),
                         historic_placement_rate_3m=float(row.get('placement_rate_3m', 0.5)),
-                        historic_avg_salary=int(row.get('avg_salary', 500000))
+                        historic_placement_rate_6m=float(row.get('placement_rate_6m', 0.7)),
+                        historic_placement_rate_12m=float(row.get('placement_rate_12m', 0.9)),
+                        historic_avg_salary=int(row.get('avg_salary', 500000)),
+                        placement_cell_activity_level=float(row.get('placement_activity', 0.5)),
+                        recruiter_participation_score=float(row.get('recruiter_score', 0.5))
                     ),
                     labor_market=LaborMarketData(
-                        field_job_demand_score=float(row.get('job_demand', 0.7))
+                        field_job_demand_score=float(row.get('job_demand', 0.7)),
+                        region_job_density=float(row.get('job_density', 0.5)),
+                        sector_hiring_trend=row.get('hiring_trend', 'IT'),
+                        sector_hiring_growth=float(row.get('hiring_growth', 0.05)),
+                        macroeconomic_condition_score=float(row.get('macro_score', 0.5))
                     )
                 )
                 students_to_process.append(stu_req)
-            except:
+            except Exception as e:
+                failed_rows += 1
                 continue # Skip invalid rows
                 
         if not students_to_process:
-            raise ValueError("No valid student records found in CSV")
+            raise ValueError(f"No valid student records found in CSV. {failed_rows} rows failed validation.")
             
         # Process in batch
-        results = prediction_service.predict_batch(students_to_process)
+        results = prediction_service.predict_batch(students_to_process, tenant_id=tenant_id, db=db)
         
         # Save to DB
         results_map = {r.student_id: r for r in results}
+        processed_count = 0
         for stu_req in students_to_process:
             if stu_req.student_id in results_map:
                 res = results_map[stu_req.student_id]
@@ -452,9 +465,13 @@ async def upload_portfolio_csv(
                     full_prediction=res.model_dump()
                 )
                 db.add(prediction)
+                processed_count += 1
         
         db.commit()
-        return {"message": f"Successfully processed {len(results)} students from CSV"}
+        return {
+            "message": f"Successfully processed {processed_count} students from CSV.",
+            "skipped_rows": failed_rows + (len(students_to_process) - len(results))
+        }
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"CSV Upload failed: {str(e)}")

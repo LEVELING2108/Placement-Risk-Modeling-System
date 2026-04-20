@@ -158,7 +158,7 @@ class DataPreprocessor:
             df['total_internship_duration_months'] = df['total_internship_duration_months'].clip(0, 24)
 
         # Fill categorical/object missing values
-        object_cols = df.select_dtypes(include=['object']).columns
+        object_cols = df.select_dtypes(include=['object', 'string']).columns
         for col in object_cols:
             if df[col].isnull().any():
                 df[col] = df[col].fillna('Unknown')
