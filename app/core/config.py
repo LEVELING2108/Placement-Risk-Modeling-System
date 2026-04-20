@@ -12,10 +12,15 @@ class Settings:
     APP_NAME = "Placement-Risk Modeling System"
     APP_VERSION = "1.0.0"
     
+    # Security
+    SECRET_KEY = os.getenv("SECRET_KEY", "placement-risk-modeling-system-secret-key-12345")
+    ALGORITHM = os.getenv("ALGORITHM", "HS256")
+    ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
+
     # Data and Model paths
     MODEL_DIR = "models"
     DATA_DIR = "data"
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./placement_risk.db"
+    SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./placement_risk.db")
     
     PLACEMENT_MODEL_PATH = "models/placement_model.pkl"
     SALARY_MODEL_PATH = "models/salary_model.pkl"

@@ -5,10 +5,14 @@ from app.db.session import engine, Base, SessionLocal
 from app.db.models import User, ModelRegistry
 from app.core.security import get_password_hash
 
+from alembic.config import Config
+from alembic import command
+
 def init_db():
-    # Create tables
-    print("Creating database tables...")
-    Base.metadata.create_all(bind=engine)
+    # Run migrations
+    print("Applying database migrations...")
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
     
     db = SessionLocal()
     

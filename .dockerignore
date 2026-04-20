@@ -25,5 +25,5 @@ PROJECT_SUMMARY.md
 test_*.py
 debug_*.py
 check_*.py
-init_db.py
-train.py
+# init_db.py and train.py allowed for container startup
+

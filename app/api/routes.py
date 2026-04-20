@@ -7,6 +7,7 @@ from typing import List, Dict
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+import sqlalchemy as sa
 import pandas as pd
 import io
 import json
@@ -28,8 +29,9 @@ from app.schemas.prediction import (
 )
 from app.services.prediction_service import PredictionService
 from app.services.report_generator import ReportGenerator
+from app.services.data_generator import SampleDataGenerator
 from app.core.config import settings
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, RoleChecker
 from app.db.session import get_db
 from app.db.models import User, StudentProfile, PredictionResult, ModelRegistry, TenantSettings
 
@@ -37,18 +39,33 @@ router = APIRouter()
 
 # Initialize prediction service
 prediction_service = PredictionService()
+data_generator = SampleDataGenerator()
+
+
+@router.get("/generate-sample-students", response_model=List[StudentPredictionRequest])
+async def generate_sample_students(
+    count: int = 10,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Generate sample student profiles for batch analysis
+    """
+    students = []
+    for i in range(min(count, 100)):
+        students.append(data_generator.generate_single_student())
+    return students
 
 
 @router.post("/predict", response_model=StudentPredictionResponse)
 async def predict_placement(
     request: StudentPredictionRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Predict placement timeline, salary, and risk for a single student and save to DB
     """
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     try:
         response = prediction_service.predict_single(request, tenant_id=tenant_id, db=db)
         
@@ -67,7 +84,7 @@ async def predict_placement(
         # 2. Save Prediction Result
         prediction = PredictionResult(
             student_profile_id=student.id,
-            lender_id=current_user["id"],
+            lender_id=current_user.id,
             tenant_id=tenant_id,
             placement_risk_score=response.risk_assessment.placement_risk_score,
             risk_level=response.risk_assessment.risk_level.value,
@@ -87,16 +104,16 @@ async def predict_placement(
 @router.post("/batch-predict", response_model=BatchPredictionResponse)
 async def batch_predict(
     request: BatchPredictionRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Predict placements for multiple students in batch and save to DB
     """
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     try:
         students = request.students[:request.max_batch_size]
-        results = prediction_service.predict_batch(students)
+        results = prediction_service.predict_batch(students, tenant_id=tenant_id, db=db)
         
         results_map = {r.student_id: r for r in results}
         
@@ -119,7 +136,7 @@ async def batch_predict(
                 # Save Prediction
                 prediction = PredictionResult(
                     student_profile_id=student.id,
-                    lender_id=current_user["id"],
+                    lender_id=current_user.id,
                     tenant_id=tenant_id,
                     placement_risk_score=res.risk_assessment.placement_risk_score,
                     risk_level=res.risk_assessment.risk_level.value,
@@ -146,14 +163,16 @@ async def batch_predict(
 @router.post("/simulate", response_model=SimulationResponse)
 async def simulate_impact(
     request: SimulationRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
     """
     Simulate what-if scenarios (Transient, not saved to DB)
     """
+    tenant_id = current_user.tenant_id
     try:
-        original = prediction_service.predict_single(request.base_data)
-        simulated = prediction_service.simulate(request.base_data, request.modifications)
+        original = prediction_service.predict_single(request.base_data, tenant_id=tenant_id, db=db)
+        simulated = prediction_service.simulate(request.base_data, request.modifications, tenant_id=tenant_id, db=db)
         
         delta_risk = simulated.risk_assessment.placement_risk_score - original.risk_assessment.placement_risk_score
         delta_prob = simulated.placement_prediction.probability_6_months - original.placement_prediction.probability_6_months
@@ -186,11 +205,11 @@ async def simulate_impact(
 @router.get("/portfolio/{student_id}/report")
 async def get_student_report(
     student_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Generate and return a professional PDF report for a specific student"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     print(f"DEBUG: Generating report for ID: {student_id}")
     
     try:
@@ -256,11 +275,14 @@ async def get_student_report(
 
 @router.get("/portfolio/trends")
 async def get_portfolio_trends(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get 30-day portfolio health trends using SQL date grouping"""
-    tenant_id = current_user["tenant_id"]
+    """Get 30-day portfolio health trends using dialect-agnostic queries"""
+    tenant_id = current_user.tenant_id
+    
+    # Use Python to calculate the date threshold for cross-dialect compatibility
+    thirty_days_ago = datetime.utcnow() - pd.Timedelta(days=30)
     
     # Query avg risk score grouped by date for last 30 days
     results = db.query(
@@ -268,15 +290,17 @@ async def get_portfolio_trends(
         func.avg(PredictionResult.placement_risk_score).label("avg_risk")
     ).filter(
         PredictionResult.tenant_id == tenant_id,
-        PredictionResult.created_at >= func.date('now', '-30 days')
+        PredictionResult.created_at >= thirty_days_ago
     ).group_by(
         func.date(PredictionResult.created_at)
     ).order_by("date").all()
     
     trends = []
     for date, avg_risk in results:
+        # Handle both string and date objects from different drivers
+        date_str = date if isinstance(date, str) else date.isoformat()
         trends.append({
-            "date": date,
+            "date": date_str,
             "health_score": round(1 - avg_risk, 3)
         })
         
@@ -286,11 +310,11 @@ async def get_portfolio_trends(
 @router.delete("/portfolio/bulk")
 async def bulk_delete_students(
     student_ids: List[str],
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(RoleChecker(["admin"])),
     db: Session = Depends(get_db)
 ):
     """Bulk delete student profiles and their predictions"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     try:
         # Delete predictions first
@@ -320,11 +344,11 @@ async def bulk_delete_students(
 @router.post("/portfolio/bulk/reports")
 async def bulk_download_reports(
     student_ids: List[str],
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Generate multiple reports and return them in a ZIP archive"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     import zipfile
     import io
     
@@ -379,11 +403,11 @@ async def bulk_download_reports(
 @router.post("/portfolio/upload")
 async def upload_portfolio_csv(
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Upload a CSV of student records and process them in bulk"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     try:
         contents = await file.read()
         df = pd.read_csv(io.BytesIO(contents))
@@ -391,6 +415,7 @@ async def upload_portfolio_csv(
         # Basic mapping of CSV columns to StudentPredictionRequest
         # We expect columns like: student_id, course_type, cgpa, internship_count, institute_tier, placement_rate_3m, etc.
         students_to_process = []
+        failed_rows = 0
         for _, row in df.iterrows():
             try:
                 # Create a request object from the row (with defaults for missing fields)
@@ -410,24 +435,34 @@ async def upload_portfolio_csv(
                     institute=InstituteData(
                         institute_tier=row.get('institute_tier', 'Tier-2'),
                         historic_placement_rate_3m=float(row.get('placement_rate_3m', 0.5)),
-                        historic_avg_salary=int(row.get('avg_salary', 500000))
+                        historic_placement_rate_6m=float(row.get('placement_rate_6m', 0.7)),
+                        historic_placement_rate_12m=float(row.get('placement_rate_12m', 0.9)),
+                        historic_avg_salary=int(row.get('avg_salary', 500000)),
+                        placement_cell_activity_level=float(row.get('placement_activity', 0.5)),
+                        recruiter_participation_score=float(row.get('recruiter_score', 0.5))
                     ),
                     labor_market=LaborMarketData(
-                        field_job_demand_score=float(row.get('job_demand', 0.7))
+                        field_job_demand_score=float(row.get('job_demand', 0.7)),
+                        region_job_density=float(row.get('job_density', 0.5)),
+                        sector_hiring_trend=row.get('hiring_trend', 'IT'),
+                        sector_hiring_growth=float(row.get('hiring_growth', 0.05)),
+                        macroeconomic_condition_score=float(row.get('macro_score', 0.5))
                     )
                 )
                 students_to_process.append(stu_req)
-            except:
+            except Exception as e:
+                failed_rows += 1
                 continue # Skip invalid rows
                 
         if not students_to_process:
-            raise ValueError("No valid student records found in CSV")
+            raise ValueError(f"No valid student records found in CSV. {failed_rows} rows failed validation.")
             
         # Process in batch
-        results = prediction_service.predict_batch(students_to_process)
+        results = prediction_service.predict_batch(students_to_process, tenant_id=tenant_id, db=db)
         
         # Save to DB
         results_map = {r.student_id: r for r in results}
+        processed_count = 0
         for stu_req in students_to_process:
             if stu_req.student_id in results_map:
                 res = results_map[stu_req.student_id]
@@ -443,7 +478,7 @@ async def upload_portfolio_csv(
                 db.flush()
                 prediction = PredictionResult(
                     student_profile_id=student.id,
-                    lender_id=current_user["id"],
+                    lender_id=current_user.id,
                     tenant_id=tenant_id,
                     placement_risk_score=res.risk_assessment.placement_risk_score,
                     risk_level=res.risk_assessment.risk_level.value,
@@ -452,9 +487,13 @@ async def upload_portfolio_csv(
                     full_prediction=res.model_dump()
                 )
                 db.add(prediction)
+                processed_count += 1
         
         db.commit()
-        return {"message": f"Successfully processed {len(results)} students from CSV"}
+        return {
+            "message": f"Successfully processed {processed_count} students from CSV.",
+            "skipped_rows": failed_rows + (len(students_to_process) - len(results))
+        }
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"CSV Upload failed: {str(e)}")
@@ -462,11 +501,11 @@ async def upload_portfolio_csv(
 
 @router.get("/settings")
 async def get_tenant_settings(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(RoleChecker(["admin", "lender"])),
     db: Session = Depends(get_db)
 ):
     """Retrieve current tenant API keys and configuration"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     settings_obj = db.query(TenantSettings).filter(TenantSettings.tenant_id == tenant_id).first()
     
     if not settings_obj:
@@ -487,11 +526,11 @@ async def get_tenant_settings(
 @router.post("/settings")
 async def update_tenant_settings(
     update_data: Dict[str, str],
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(RoleChecker(["admin", "lender"])),
     db: Session = Depends(get_db)
 ):
     """Update tenant API keys in the database"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     settings_obj = db.query(TenantSettings).filter(TenantSettings.tenant_id == tenant_id).first()
     
     if not settings_obj:
@@ -508,7 +547,10 @@ async def update_tenant_settings(
 
 
 @router.get("/model-info")
-async def get_model_info(db: Session = Depends(get_db)):
+async def get_model_info(
+    current_user: User = Depends(RoleChecker(["admin"])),
+    db: Session = Depends(get_db)
+):
     """Get information about the loaded models and registry from DB"""
     latest_registry = db.query(ModelRegistry).filter(ModelRegistry.is_active == True).order_by(ModelRegistry.trained_at.desc()).first()
     
@@ -551,11 +593,11 @@ async def health_check():
 
 @router.get("/portfolio")
 async def get_portfolio(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get all students in portfolio for current tenant from DB"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
@@ -581,11 +623,11 @@ async def get_portfolio(
 
 @router.get("/portfolio/stats")
 async def get_portfolio_stats(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get portfolio statistics using SQL aggregations"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     total = db.query(PredictionResult).filter(PredictionResult.tenant_id == tenant_id).count()
     
@@ -635,11 +677,11 @@ async def get_model_performance(db: Session = Depends(get_db)):
 
 @router.get("/analytics/bias-check")
 async def get_bias_check(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Perform algorithmic bias analysis across different cohorts"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
@@ -675,11 +717,11 @@ async def get_bias_check(
 
 @router.get("/analytics/risk-by-course")
 async def analytics_risk_by_course(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get risk distribution by course type using joined query"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
@@ -700,11 +742,11 @@ async def analytics_risk_by_course(
 
 @router.get("/analytics/risk-by-tier")
 async def analytics_risk_by_tier(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get risk distribution by institute tier using joined query"""
-    tenant_id = current_user["tenant_id"]
+    tenant_id = current_user.tenant_id
     
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id

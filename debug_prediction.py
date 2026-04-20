@@ -2,7 +2,10 @@
 Debug prediction flow end-to-end
 """
 import sys
-sys.path.insert(0, "C:\\Users\\suman\\Downloads\\PERSONAL PROJECT\\Placement-Risk Modeling system")
+import os
+
+# Add the project root to sys.path using relative path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from app.services.prediction_service import PredictionService
 from app.schemas.prediction import StudentPredictionRequest

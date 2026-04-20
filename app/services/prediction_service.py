@@ -77,7 +77,7 @@ class PredictionService:
         
         # Merge market stats into request dict for model consumption
         data = request.model_dump()
-        if market_stats.get("live_data"):
+        if "field_job_demand_score" in market_stats:
             data["labor_market"]["field_job_demand_score"] = market_stats["field_job_demand_score"]
             data["labor_market"]["sector_hiring_growth"] = market_stats["sector_hiring_growth"]
         

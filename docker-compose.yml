@@ -1,18 +1,35 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: placement_risk_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: placement_risk
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   app:
     build: .
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     volumes:
-      - ./placement_risk.db:/app/placement_risk.db
       - ./data:/app/data
       - ./models:/app/models
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/placement_risk
     env_file:
       - .env
     restart: always
 
 volumes:
+  postgres_data:
   data:
   models:

@@ -2,7 +2,10 @@
 Test prediction directly to debug the issue
 """
 import sys
-sys.path.insert(0, "C:\\Users\\suman\\Downloads\\PERSONAL PROJECT\\Placement-Risk Modeling system")
+import os
+
+# Add the project root to sys.path using relative path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from app.services.preprocessing import DataPreprocessor
 

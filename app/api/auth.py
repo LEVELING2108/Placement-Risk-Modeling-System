@@ -22,6 +22,6 @@ async def login(
         )
     
     access_token = security.create_access_token(
-        data={"sub": user.username, "tenant_id": user.tenant_id}
+        data={"sub": user.username, "tenant_id": user.tenant_id, "role": user.role}
     )
-    return {"access_token": access_token, "token_type": "bearer", "tenant_id": user.tenant_id}
+    return {"access_token": access_token, "token_type": "bearer", "tenant_id": user.tenant_id, "role": user.role}

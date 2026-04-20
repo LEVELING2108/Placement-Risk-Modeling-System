@@ -10,6 +10,7 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     tenant_id = Column(String, index=True)
+    role = Column(String, default="lender")  # admin, lender, auditor
     
     predictions = relationship("PredictionResult", back_populates="lender")
 
