@@ -7,6 +7,7 @@ import pandas as pd
 from typing import Dict, List, Optional
 from datetime import datetime
 import os
+from sqlalchemy.orm import Session
 
 from app.services.preprocessing import DataPreprocessor
 from app.services.feature_engineering import FeatureEngineer
@@ -61,13 +62,18 @@ class PredictionService:
             print(f"Warning: Could not load models: {e}")
             print("Models will need to be trained before use.")
     
-    def predict_single(self, request: StudentPredictionRequest) -> StudentPredictionResponse:
+    def predict_single(
+        self, 
+        request: StudentPredictionRequest,
+        tenant_id: str = "default",
+        db: Optional[Session] = None
+    ) -> StudentPredictionResponse:
         """
         Generate complete prediction for a single student
         """
-        # Step 0: Enrich with Market Data (Phase 3)
+        # Step 0: Enrich with Market Data (Phase 3 + 5)
         sector = request.academic.course_type.value
-        market_stats = self.market_data.get_sector_demand(sector)
+        market_stats = self.market_data.get_sector_demand(sector, tenant_id=tenant_id, db=db)
         
         # Merge market stats into request dict for model consumption
         data = request.model_dump()
@@ -96,12 +102,14 @@ class PredictionService:
             df_engineered, placement_probs, salary_pred
         )
         
-        # Step 7: Generate advanced AI recommendations (Phase 3)
+        # Step 7: Generate advanced AI recommendations (Phase 3 + 5)
         ai_recommendations = self.recommendation_engine.generate_advanced_recommendations(
             data, 
             {"risk_level": risk_level, "placement_risk_score": risk_score, "risk_factors": risk_factors},
             placement_probs,
-            salary_pred
+            salary_pred,
+            tenant_id=tenant_id,
+            db=db
         )
         
         # Get recruiter matches
@@ -160,24 +168,35 @@ class PredictionService:
         
         return response
     
-    def predict_batch(self, requests: List[StudentPredictionRequest]) -> List[StudentPredictionResponse]:
+    def predict_batch(
+        self, 
+        requests: List[StudentPredictionRequest],
+        tenant_id: str = "default",
+        db: Optional[Session] = None
+    ) -> List[StudentPredictionResponse]:
         results = []
         for request in requests:
             try:
-                result = self.predict_single(request)
+                result = self.predict_single(request, tenant_id=tenant_id, db=db)
                 results.append(result)
             except Exception as e:
                 print(f"Error predicting for student {request.student_id}: {e}")
         return results
 
-    def simulate(self, base_request: StudentPredictionRequest, modifications: Dict[str, any]) -> StudentPredictionResponse:
+    def simulate(
+        self, 
+        base_request: StudentPredictionRequest, 
+        modifications: Dict[str, any],
+        tenant_id: str = "default",
+        db: Optional[Session] = None
+    ) -> StudentPredictionResponse:
         request_dict = base_request.model_dump()
         for key, value in modifications.items():
             self._set_nested_value(request_dict, key, value)
             
         from app.schemas.prediction import StudentPredictionRequest as SPR
         new_request = SPR(**request_dict)
-        return self.predict_single(new_request)
+        return self.predict_single(new_request, tenant_id=tenant_id, db=db)
 
     def _set_nested_value(self, d, key, value):
         parts = key.split('.')

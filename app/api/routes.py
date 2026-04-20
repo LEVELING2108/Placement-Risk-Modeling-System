@@ -2,11 +2,14 @@
 API routes for the placement-risk modeling system (Database-Driven)
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, HTTPException, Depends, Response, UploadFile, File
 from typing import List, Dict
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+import pandas as pd
+import io
+import json
 
 from app.schemas.prediction import (
     StudentPredictionRequest,
@@ -18,14 +21,17 @@ from app.schemas.prediction import (
     PlacementPrediction,
     SalaryPrediction,
     RiskAssessment,
-    Recommendation
+    Recommendation,
+    StudentAcademicData,
+    InstituteData,
+    LaborMarketData
 )
 from app.services.prediction_service import PredictionService
 from app.services.report_generator import ReportGenerator
 from app.core.config import settings
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.db.models import User, StudentProfile, PredictionResult, ModelRegistry
+from app.db.models import User, StudentProfile, PredictionResult, ModelRegistry, TenantSettings
 
 router = APIRouter()
 
@@ -44,7 +50,7 @@ async def predict_placement(
     """
     tenant_id = current_user["tenant_id"]
     try:
-        response = prediction_service.predict_single(request)
+        response = prediction_service.predict_single(request, tenant_id=tenant_id, db=db)
         
         # 1. Save Student Profile
         student = StudentProfile(
@@ -177,9 +183,6 @@ async def simulate_impact(
         raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")
 
 
-from app.services.report_generator import ReportGenerator
-from fastapi.responses import Response
-
 @router.get("/portfolio/{student_id}/report")
 async def get_student_report(
     student_id: str,
@@ -250,6 +253,7 @@ async def get_student_report(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=error_msg)
 
+
 @router.get("/portfolio/trends")
 async def get_portfolio_trends(
     current_user: dict = Depends(get_current_user),
@@ -259,7 +263,6 @@ async def get_portfolio_trends(
     tenant_id = current_user["tenant_id"]
     
     # Query avg risk score grouped by date for last 30 days
-    # SQLite specific date grouping
     results = db.query(
         func.date(PredictionResult.created_at).label("date"),
         func.avg(PredictionResult.placement_risk_score).label("avg_risk")
@@ -290,7 +293,7 @@ async def bulk_delete_students(
     tenant_id = current_user["tenant_id"]
     
     try:
-        # Delete predictions first (foreign key constraint)
+        # Delete predictions first
         db.query(PredictionResult).filter(
             PredictionResult.tenant_id == tenant_id,
             PredictionResult.student_profile_id.in_(
@@ -330,7 +333,6 @@ async def bulk_download_reports(
     try:
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
             for sid in student_ids:
-                # Fetch data (re-use logic from single report)
                 profile = db.query(StudentProfile).filter(
                     StudentProfile.student_id == sid,
                     StudentProfile.tenant_id == tenant_id
@@ -342,7 +344,6 @@ async def bulk_download_reports(
                     ).order_by(PredictionResult.created_at.desc()).first()
                     
                     if latest_pred:
-                        # Helper to ensure dict
                         def to_dict(data):
                             if isinstance(data, str):
                                 import json
@@ -373,6 +374,137 @@ async def bulk_download_reports(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Bulk report generation failed: {str(e)}")
+
+
+@router.post("/portfolio/upload")
+async def upload_portfolio_csv(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Upload a CSV of student records and process them in bulk"""
+    tenant_id = current_user["tenant_id"]
+    try:
+        contents = await file.read()
+        df = pd.read_csv(io.BytesIO(contents))
+        
+        # Basic mapping of CSV columns to StudentPredictionRequest
+        # We expect columns like: student_id, course_type, cgpa, internship_count, institute_tier, placement_rate_3m, etc.
+        students_to_process = []
+        for _, row in df.iterrows():
+            try:
+                # Create a request object from the row (with defaults for missing fields)
+                stu_req = StudentPredictionRequest(
+                    student_id=str(row.get('student_id', f"CSV_{datetime.now().timestamp()}")),
+                    academic=StudentAcademicData(
+                        course_type=row.get('course_type', 'Engineering'),
+                        current_year=int(row.get('current_year', 4)),
+                        semester=int(row.get('semester', 8)),
+                        cgpa=float(row.get('cgpa', 7.0)),
+                        academic_consistency=float(row.get('academic_consistency', 0.75)),
+                        internship_count=int(row.get('internship_count', 0)),
+                        total_internship_duration_months=float(row.get('internship_duration', 0)),
+                        skill_certifications_count=int(row.get('certifications', 0)),
+                        relevant_coursework_count=int(row.get('coursework', 5))
+                    ),
+                    institute=InstituteData(
+                        institute_tier=row.get('institute_tier', 'Tier-2'),
+                        historic_placement_rate_3m=float(row.get('placement_rate_3m', 0.5)),
+                        historic_avg_salary=int(row.get('avg_salary', 500000))
+                    ),
+                    labor_market=LaborMarketData(
+                        field_job_demand_score=float(row.get('job_demand', 0.7))
+                    )
+                )
+                students_to_process.append(stu_req)
+            except:
+                continue # Skip invalid rows
+                
+        if not students_to_process:
+            raise ValueError("No valid student records found in CSV")
+            
+        # Process in batch
+        results = prediction_service.predict_batch(students_to_process)
+        
+        # Save to DB
+        results_map = {r.student_id: r for r in results}
+        for stu_req in students_to_process:
+            if stu_req.student_id in results_map:
+                res = results_map[stu_req.student_id]
+                student = StudentProfile(
+                    student_id=stu_req.student_id,
+                    tenant_id=tenant_id,
+                    academic_data=stu_req.academic.model_dump(),
+                    institute_data=stu_req.institute.model_dump(),
+                    labor_market_data=stu_req.labor_market.model_dump(),
+                    real_time_signals=stu_req.real_time_signals.model_dump() if stu_req.real_time_signals else {}
+                )
+                db.add(student)
+                db.flush()
+                prediction = PredictionResult(
+                    student_profile_id=student.id,
+                    lender_id=current_user["id"],
+                    tenant_id=tenant_id,
+                    placement_risk_score=res.risk_assessment.placement_risk_score,
+                    risk_level=res.risk_assessment.risk_level.value,
+                    predicted_timeline=res.placement_prediction.predicted_timeline,
+                    expected_salary_avg=res.salary_prediction.expected_salary_avg,
+                    full_prediction=res.model_dump()
+                )
+                db.add(prediction)
+        
+        db.commit()
+        return {"message": f"Successfully processed {len(results)} students from CSV"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"CSV Upload failed: {str(e)}")
+
+
+@router.get("/settings")
+async def get_tenant_settings(
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Retrieve current tenant API keys and configuration"""
+    tenant_id = current_user["tenant_id"]
+    settings_obj = db.query(TenantSettings).filter(TenantSettings.tenant_id == tenant_id).first()
+    
+    if not settings_obj:
+        # Create default
+        settings_obj = TenantSettings(tenant_id=tenant_id)
+        db.add(settings_obj)
+        db.commit()
+        db.refresh(settings_obj)
+        
+    return {
+        "gemini_api_key": f"{settings_obj.gemini_api_key[:5]}...{settings_obj.gemini_api_key[-4:]}" if settings_obj.gemini_api_key else "",
+        "groq_api_key": f"{settings_obj.groq_api_key[:5]}...{settings_obj.groq_api_key[-4:]}" if settings_obj.groq_api_key else "",
+        "adzuna_app_id": settings_obj.adzuna_app_id or "",
+        "adzuna_app_key": "********" if settings_obj.adzuna_app_key else ""
+    }
+
+
+@router.post("/settings")
+async def update_tenant_settings(
+    update_data: Dict[str, str],
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update tenant API keys in the database"""
+    tenant_id = current_user["tenant_id"]
+    settings_obj = db.query(TenantSettings).filter(TenantSettings.tenant_id == tenant_id).first()
+    
+    if not settings_obj:
+        settings_obj = TenantSettings(tenant_id=tenant_id)
+        db.add(settings_obj)
+        
+    if "gemini_api_key" in update_data: settings_obj.gemini_api_key = update_data["gemini_api_key"]
+    if "groq_api_key" in update_data: settings_obj.groq_api_key = update_data["groq_api_key"]
+    if "adzuna_app_id" in update_data: settings_obj.adzuna_app_id = update_data["adzuna_app_id"]
+    if "adzuna_app_key" in update_data: settings_obj.adzuna_app_key = update_data["adzuna_app_key"]
+    
+    db.commit()
+    return {"message": "Settings updated successfully"}
 
 
 @router.get("/model-info")
@@ -425,7 +557,6 @@ async def get_portfolio(
     """Get all students in portfolio for current tenant from DB"""
     tenant_id = current_user["tenant_id"]
     
-    # Query joined profiles and predictions
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
     ).filter(StudentProfile.tenant_id == tenant_id).all()
@@ -456,7 +587,6 @@ async def get_portfolio_stats(
     """Get portfolio statistics using SQL aggregations"""
     tenant_id = current_user["tenant_id"]
     
-    # Total count
     total = db.query(PredictionResult).filter(PredictionResult.tenant_id == tenant_id).count()
     
     if total == 0:
@@ -468,7 +598,6 @@ async def get_portfolio_stats(
             "portfolio_health_score": 1.0
         }
     
-    # Risk Distribution
     risk_counts = db.query(
         PredictionResult.risk_level, func.count(PredictionResult.id)
     ).filter(PredictionResult.tenant_id == tenant_id).group_by(PredictionResult.risk_level).all()
@@ -478,7 +607,6 @@ async def get_portfolio_stats(
         if level in risk_dist:
             risk_dist[level] = count
             
-    # Average Stats
     avg_stats = db.query(
         func.avg(PredictionResult.placement_risk_score),
         func.avg(PredictionResult.expected_salary_avg)
@@ -520,35 +648,24 @@ async def get_bias_check(
     if not results:
         return {"error": "Insufficient data for bias analysis"}
     
-    analysis = {
-        "by_course": {},
-        "by_tier": {}
-    }
+    analysis = {"by_course": {}, "by_tier": {}}
     
-    # Process Course Bias
     for profile, pred in results:
         course = profile.academic_data.get('course_type', 'Other')
         tier = profile.institute_data.get('institute_tier', 'Other')
         
-        # Course aggregation
         if course not in analysis["by_course"]:
             analysis["by_course"][course] = {"total": 0, "sum_risk": 0, "high_risk_count": 0}
-        
         analysis["by_course"][course]["total"] += 1
         analysis["by_course"][course]["sum_risk"] += pred.placement_risk_score
-        if pred.risk_level == "High":
-            analysis["by_course"][course]["high_risk_count"] += 1
+        if pred.risk_level == "High": analysis["by_course"][course]["high_risk_count"] += 1
             
-        # Tier aggregation
         if tier not in analysis["by_tier"]:
             analysis["by_tier"][tier] = {"total": 0, "sum_risk": 0, "high_risk_count": 0}
-            
         analysis["by_tier"][tier]["total"] += 1
         analysis["by_tier"][tier]["sum_risk"] += pred.placement_risk_score
-        if pred.risk_level == "High":
-            analysis["by_tier"][tier]["high_risk_count"] += 1
+        if pred.risk_level == "High": analysis["by_tier"][tier]["high_risk_count"] += 1
             
-    # Calculate Averages
     for category in ["by_course", "by_tier"]:
         for group, stats in analysis[category].items():
             stats["avg_risk"] = round(stats["sum_risk"] / stats["total"], 3)
@@ -564,7 +681,6 @@ async def analytics_risk_by_course(
     """Get risk distribution by course type using joined query"""
     tenant_id = current_user["tenant_id"]
     
-    # This is a bit more complex in SQL but much faster
     results = db.query(StudentProfile, PredictionResult).join(
         PredictionResult, StudentProfile.id == PredictionResult.student_profile_id
     ).filter(StudentProfile.tenant_id == tenant_id).all()
@@ -573,15 +689,12 @@ async def analytics_risk_by_course(
     for profile, pred in results:
         course = profile.academic_data.get('course_type')
         if not course: continue
-        
         if course not in course_risk:
             course_risk[course] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
-            
         level = pred.risk_level
         if level in course_risk[course]:
             course_risk[course][level] += 1
             course_risk[course]["total"] += 1
-            
     return course_risk
 
 
@@ -601,13 +714,10 @@ async def analytics_risk_by_tier(
     for profile, pred in results:
         tier = profile.institute_data.get('institute_tier')
         if not tier: continue
-        
         if tier not in tier_risk:
             tier_risk[tier] = {"Low": 0, "Medium": 0, "High": 0, "total": 0}
-            
         level = pred.risk_level
         if level in tier_risk[tier]:
             tier_risk[tier][level] += 1
             tier_risk[tier]["total"] += 1
-            
     return tier_risk
