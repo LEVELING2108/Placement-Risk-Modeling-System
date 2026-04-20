@@ -61,3 +61,15 @@ class ModelRegistry(Base):
     metrics = Column(JSON)
     feature_count = Column(Integer)
     is_active = Column(Boolean, default=True)
+
+class TenantSettings(Base):
+    __tablename__ = "tenant_settings"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(String, unique=True, index=True)
+    gemini_api_key = Column(String, nullable=True)
+    groq_api_key = Column(String, nullable=True)
+    adzuna_app_id = Column(String, nullable=True)
+    adzuna_app_key = Column(String, nullable=True)
+    
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())

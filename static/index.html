@@ -175,21 +175,24 @@
         .progress-bar-custom { height: 10px; border-radius: 9999px; background: var(--slate-200); overflow: hidden; margin: 8px 0; }
         .progress-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* AI Roadmap Section */
-        .ai-card {
-            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-            border: 1px solid #bae6fd; position: relative;
+        /* Skeleton Loaders */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 8px;
         }
-        .ai-card::after {
-            content: 'AI'; position: absolute; top: 12px; right: 12px;
-            font-size: 0.625rem; font-weight: 800; background: var(--info);
-            color: #fff; padding: 2px 6px; border-radius: 4px;
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .page-section { display: none; }
         .page-section.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        
+        .modal-overlay { z-index: 2000; }
     </style>
 </head>
 <body>
@@ -232,6 +235,7 @@
             <li><a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
             <li><a href="#" data-page="modelhealth"><i class="fas fa-heartbeat"></i> Model Health</a></li>
             <li><a href="#" data-page="reports"><i class="fas fa-file-alt"></i> Reports</a></li>
+            <li><a href="#" data-page="settings"><i class="fas fa-cog"></i> Settings</a></li>
             <li class="mt-5"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </aside>
@@ -317,6 +321,9 @@
                 <div class="card-header">
                     <h5>Student Portfolio</h5>
                     <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-primary" onclick="showUploadModal()">
+                            <i class="fas fa-file-upload"></i> Upload CSV
+                        </button>
                         <button class="btn btn-sm btn-outline-danger" id="btn-bulk-delete" style="display: none;" onclick="bulkDelete()">
                             <i class="fas fa-trash-alt"></i> Delete Selected
                         </button>
@@ -329,10 +336,15 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4"><input type="text" class="form-control-custom" id="search-students" placeholder="Search students..." onkeyup="filterPortfolio()"></div>
-                        <div class="col-md-3">
-                            <select class="form-control-custom" id="filter-risk" onchange="filterPortfolio()">
-                                <option value="">All Risk Levels</option><option value="Low">Low Risk</option><option value="Medium">Medium Risk</option><option value="High">High Risk</option>
-                            </select>
+                        <div class="col-md-8">
+                            <div class="d-flex gap-2">
+                                <select class="form-control-custom" id="filter-risk" onchange="filterPortfolio()" style="max-width: 200px;">
+                                    <option value="">All Risk Levels</option><option value="Low">Low Risk</option><option value="Medium">Medium Risk</option><option value="High">High Risk</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="setQuickFilter('high-default')">High Default Risk</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="setQuickFilter('top-performers')">Top Performers</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="setQuickFilter('recent')">Recent Additions</button>
+                            </div>
                         </div>
                     </div>
                     <div class="table-container">
@@ -378,10 +390,22 @@
                                 <div class="mb-3"><label>Job Demand Score</label><input type="number" class="form-control-custom" name="job_demand" value="0.7" step="0.1"></div>
                             </div>
                         </div>
-                        <button type="submit" class="btn-primary-custom"><i class="fas fa-chart-line"></i> Run Prediction</button>
+                        <button type="submit" class="btn-primary-custom" id="btn-run-predict"><i class="fas fa-chart-line"></i> Run Prediction</button>
                     </form>
                 </div>
             </div>
+            
+            <div id="prediction-skeleton" class="card" style="display: none;">
+                <div class="card-body">
+                    <div class="skeleton mb-4" style="height: 30px; width: 40%;"></div>
+                    <div class="row">
+                        <div class="col-md-6"><div class="skeleton mb-2" style="height: 100px;"></div><div class="skeleton" style="height: 60px;"></div></div>
+                        <div class="col-md-6"><div class="skeleton mb-2" style="height: 100px;"></div><div class="skeleton" style="height: 60px;"></div></div>
+                    </div>
+                    <div class="skeleton mt-4" style="height: 150px;"></div>
+                </div>
+            </div>
+
             <div id="prediction-result" class="card" style="display: none;">
                 <div class="card-header"><h5>Prediction Result & Explainability</h5></div>
                 <div class="card-body">
@@ -546,6 +570,43 @@
             </div>
         </div>
 
+        <div id="page-settings" class="page-section">
+            <div class="card">
+                <div class="card-header"><h5>System Configuration</h5></div>
+                <div class="card-body">
+                    <form id="settings-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <h6 class="mb-3">AI Providers (LLM)</h6>
+                                <div class="mb-3">
+                                    <label>Gemini API Key</label>
+                                    <input type="password" class="form-control-custom" id="settings-gemini" placeholder="AIzaSy...">
+                                    <small class="text-muted">Primary for deep analysis</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Groq API Key</label>
+                                    <input type="password" class="form-control-custom" id="settings-groq" placeholder="gsk_...">
+                                    <small class="text-muted">Fallback for high reliability</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <h6 class="mb-3">Market Data Providers</h6>
+                                <div class="mb-3">
+                                    <label>Adzuna App ID</label>
+                                    <input type="text" class="form-control-custom" id="settings-adzuna-id">
+                                </div>
+                                <div class="mb-3">
+                                    <label>Adzuna App Key</label>
+                                    <input type="password" class="form-control-custom" id="settings-adzuna-key">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary-custom">Save Configuration</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div id="page-reports" class="page-section">
             <div class="card">
                 <div class="card-header"><h5>Generate Reports</h5></div>
@@ -575,6 +636,7 @@
         </div>
     </div>
 
+    <!-- Modals -->
     <div class="modal-overlay" id="predict-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:12px; width:90%; max-width:700px; max-height:90vh; overflow-y:auto;">
             <div style="padding:20px 25px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;"><h5 style="margin:0">Quick Prediction</h5><button onclick="hidePredictModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div>
@@ -593,6 +655,30 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="upload-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:12px; width:90%; max-width:500px; padding:25px;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Bulk Student Import</h5>
+                <button onclick="hideUploadModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <form id="upload-form">
+                <div class="mb-4">
+                    <label>Select CSV File</label>
+                    <input type="file" class="form-control-custom" id="csv-file" accept=".csv" required>
+                    <small class="text-muted d-block mt-2">Required columns: student_id, course_type, cgpa, internship_count, institute_tier</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-primary-custom flex-grow-1">Start Processing</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="downloadTemplate()">Template</button>
+                </div>
+            </form>
+            <div id="upload-progress" style="display: none;" class="mt-4 text-center">
+                <div class="spinner-border text-primary mb-2"></div>
+                <p>Processing student records, please wait...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         let allStudents = [];
         let charts = {};
@@ -602,10 +688,7 @@
 
         async function checkAuth() {
             const token = localStorage.getItem('token');
-            if (!token) {
-                showLogin();
-                return false;
-            }
+            if (!token) { showLogin(); return false; }
             currentUser = JSON.parse(localStorage.getItem('user'));
             document.getElementById('tenant-display').textContent = currentUser.tenant_id.replace('_', ' ').toUpperCase();
             showApp();
@@ -634,50 +717,36 @@
             e.preventDefault();
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
-
             const formData = new FormData();
             formData.append('username', username);
             formData.append('password', password);
 
             try {
-                const res = await fetch('/api/v1/auth/login', {
-                    method: 'POST',
-                    body: formData
-                });
+                const res = await fetch('/api/v1/auth/login', { method: 'POST', body: formData });
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('token', data.access_token);
                     localStorage.setItem('user', JSON.stringify({ username, tenant_id: data.tenant_id }));
                     location.reload();
-                } else {
-                    alert('Invalid credentials');
-                }
-            } catch (err) {
-                alert('Login failed');
-            }
+                } else { alert('Invalid credentials'); }
+            } catch (err) { alert('Login failed'); }
         });
 
-        // Wrapper for fetch with auth
         async function authFetch(url, options = {}) {
             const token = localStorage.getItem('token');
-            options.headers = {
-                ...options.headers,
-                'Authorization': `Bearer ${token}`
-            };
+            options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
             const res = await fetch(url, options);
-            if (res.status === 401) {
-                logout();
-                throw new Error('Unauthorized');
-            }
+            if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
             return res;
         }
 
+        // --- Navigation ---
+
         document.querySelectorAll('.sidebar-menu a').forEach(link => {
             link.addEventListener('click', (e) => {
-                if (link.onclick) return; // Skip if has onclick (logout)
+                if (link.onclick) return;
                 e.preventDefault();
-                const page = link.dataset.page;
-                navigateTo(page);
+                navigateTo(link.dataset.page);
             });
         });
 
@@ -691,14 +760,10 @@
             if (activeSection) activeSection.classList.add('active');
             
             const titles = {
-                dashboard: 'Dashboard', 
-                portfolio: 'Portfolio', 
-                predict: 'Predict Risk', 
-                simulator: 'Risk Simulator',
-                batch: 'Batch Analysis', 
-                analytics: 'Analytics', 
-                modelhealth: 'Model Health',
-                reports: 'Reports'
+                dashboard: 'Dashboard', portfolio: 'Portfolio', predict: 'Predict Risk', 
+                simulator: 'Risk Simulator', batch: 'Batch Analysis', 
+                analytics: 'Analytics', modelhealth: 'Model Health',
+                settings: 'Settings', reports: 'Reports'
             };
             document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
 
@@ -707,282 +772,10 @@
             if (page === 'analytics') loadAnalytics();
             if (page === 'simulator') loadSimulator();
             if (page === 'modelhealth') loadModelHealth();
+            if (page === 'settings') loadSettings();
         }
 
-        // --- Model Health Logic ---
-
-        async function loadModelHealth() {
-            try {
-                // 1. Fetch Performance Metrics
-                const perfRes = await authFetch('/api/v1/analytics/model-performance');
-                const perfData = await perfRes.json();
-                
-                if (perfData && !perfData.error) {
-                    // Extract from nested structure: placement -> 6m -> random_forest
-                    const placement = perfData.placement || {};
-                    const m6 = placement['6m'] || {};
-                    const metrics = m6.random_forest || {};
-                    
-                    if (metrics.accuracy) {
-                        document.getElementById('health-accuracy').textContent = (metrics.accuracy * 100).toFixed(1) + '%';
-                        
-                        const ctx = document.getElementById('chart-model-perf').getContext('2d');
-                        if (charts.modelPerf) charts.modelPerf.destroy();
-                        
-                        const labels = ['Accuracy', 'Precision', 'Recall', 'F1-Score'];
-                        const values = [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1];
-                        
-                        charts.modelPerf = new Chart(ctx, {
-                            type: 'radar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Placement Model (6m RF)',
-                                    data: values,
-                                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                                    borderColor: 'rgba(79, 70, 229, 1)',
-                                    pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    r: { 
-                                        beginAtZero: true, 
-                                        max: 1, 
-                                        ticks: { display: false },
-                                        grid: { color: 'rgba(0,0,0,0.05)' }
-                                    }
-                                },
-                                plugins: {
-                                    legend: { position: 'bottom' }
-                                }
-                            }
-                        });
-                    }
-                }
-
-                // 2. Fetch Bias Analysis
-                const biasRes = await authFetch('/api/v1/analytics/bias-check');
-                const biasData = await biasRes.json();
-                
-                if (biasData && !biasData.error) {
-                    const courseData = biasData.by_course || {};
-                    const ctxBias = document.getElementById('chart-bias-risk').getContext('2d');
-                    if (charts.biasRisk) charts.biasRisk.destroy();
-                    
-                    const labels = Object.keys(courseData);
-                    const avgRisks = labels.map(l => courseData[l].avg_risk);
-                    
-                    charts.biasRisk = new Chart(ctxBias, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Average Risk Score',
-                                data: avgRisks,
-                                backgroundColor: '#4f46e5',
-                                borderRadius: 6
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: { beginAtZero: true, max: 1, title: { display: true, text: 'Risk Score (0-1)' } }
-                            }
-                        }
-                    });
-                    
-                    // Fairness Summary Logic
-                    let maxDiff = 0;
-                    if (avgRisks.length > 1) {
-                        maxDiff = Math.max(...avgRisks) - Math.min(...avgRisks);
-                    }
-                    
-                    document.getElementById('health-bias').textContent = maxDiff.toFixed(2);
-                    const summaryElem = document.getElementById('fairness-summary');
-                    
-                    if (maxDiff < 0.15) {
-                        summaryElem.className = "alert alert-success";
-                        summaryElem.innerHTML = '<i class="fas fa-check-circle me-2"></i> <strong>Fairness Pass:</strong> Algorithmic parity is high. Risk scores are consistently distributed across cohorts.';
-                    } else {
-                        summaryElem.className = "alert alert-warning";
-                        summaryElem.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> <strong>Fairness Alert:</strong> Significant variance detected in risk scores between cohorts. Manual audit recommended.';
-                    }
-                }
-            } catch (err) {
-                console.error("Error loading model health:", err);
-            }
-        }
-
-        // --- Simulator Logic ---
-        
-        async function loadSimulator() {
-            console.log("Loading simulator data...");
-            const res = await authFetch('/api/v1/portfolio');
-            const data = await res.json();
-            allStudents = data.students || []; // Update global allStudents
-            console.log("Simulator students loaded:", allStudents.length);
-            
-            const selector = document.getElementById('sim-student-selector');
-            selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
-                allStudents.map(s => `<option value="${s.student_id}">${s.student_id} (${getAcademic(s).course_type || 'N/A'})</option>`).join('');
-        }
-
-        function loadStudentToSim() {
-            const studentId = document.getElementById('sim-student-selector').value;
-            if (!studentId) return;
-            
-            const student = allStudents.find(s => s.student_id === studentId);
-            if (!student) return;
-            
-            const academic = getAcademic(student);
-            const signals = student.real_time_signals || {};
-            
-            document.getElementById('sim-cgpa').value = academic.cgpa || 7.0;
-            document.getElementById('sim-cgpa').nextElementSibling.value = academic.cgpa || 7.0;
-            document.getElementById('sim-internships').value = academic.internship_count || 0;
-            document.getElementById('sim-certs').value = academic.skill_certifications_count || 0;
-            document.getElementById('sim-apps').value = signals.job_portal_applications_count || 0;
-            
-            document.getElementById('simulation-comparison').style.display = 'none';
-            document.getElementById('sim-empty-state').style.display = 'block';
-        }
-
-        document.getElementById('simulator-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const studentId = document.getElementById('sim-student-selector').value;
-            if (!studentId) {
-                alert('Please select a student first');
-                return;
-            }
-            
-            const student = allStudents.find(s => s.student_id === studentId);
-            
-            const baseData = {
-                student_id: student.student_id,
-                academic: getAcademic(student),
-                institute: getInstitute(student),
-                labor_market: student.labor_market || {},
-                real_time_signals: student.real_time_signals || {}
-            };
-            
-            const modifications = {
-                'academic.cgpa': parseFloat(document.getElementById('sim-cgpa').value),
-                'academic.internship_count': parseInt(document.getElementById('sim-internships').value),
-                'academic.skill_certifications_count': parseInt(document.getElementById('sim-certs').value),
-                'real_time_signals.job_portal_applications_count': parseInt(document.getElementById('sim-apps').value)
-            };
-            
-            try {
-                const response = await authFetch('/api/v1/simulate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ base_data: baseData, modifications: modifications })
-                });
-                const result = await response.json();
-                displaySimulation(result);
-            } catch (err) {
-                alert('Simulation failed: ' + err.message);
-            }
-        });
-
-        // Helper to extract data from student object
-        function getAcademic(s) { return s.academic || {}; }
-        function getInstitute(s) { return s.institute || {}; }
-        function getPrediction(s) { return s.prediction || s; }
-        function getRiskAssessment(s) {
-            const pred = getPrediction(s);
-            return pred.risk_assessment || {};
-        }
-        function getSalaryPrediction(s) {
-            const pred = getPrediction(s);
-            return pred.salary_prediction || {};
-        }
-        function getPlacementPrediction(s) {
-            const pred = getPrediction(s);
-            return pred.placement_prediction || {};
-        }
-
-        function viewStudent(id) {
-            console.log("Viewing student:", id);
-            // Use loose equality == to handle string vs number IDs
-            const student = allStudents.find(s => s.student_id == id);
-            
-            if (!student) {
-                console.error("Student not found in allStudents. Current count:", allStudents.length);
-                alert('Student data not found. Please refresh the dashboard.');
-                return;
-            }
-            
-            // Switch to predict page
-            navigateTo('predict');
-            
-            // Extract the result object
-            const result = student.prediction || student;
-            console.log("Found student data:", result);
-            
-            // Small delay to allow navigateTo to finish rendering
-            setTimeout(() => {
-                displayPrediction(result);
-                document.getElementById('prediction-result').scrollIntoView({ behavior: 'smooth' });
-            }, 50);
-        }
-
-        function showPredictModal() { 
-            document.getElementById('predict-modal').style.display = 'flex'; 
-        }
-        
-        function hidePredictModal() { 
-            document.getElementById('predict-modal').style.display = 'none'; 
-        }
-
-        document.getElementById('quick-predict-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const f = e.target;
-            const data = {
-                student_id: f.student_id.value || 'STU_' + Date.now(),
-                academic: {
-                    course_type: f.course_type.value, current_year: 4, semester: 8,
-                    cgpa: parseFloat(f.cgpa.value), academic_consistency: 0.75,
-                    internship_count: parseInt(f.internship_count.value),
-                    total_internship_duration_months: 4,
-                    skill_certifications_count: 2, relevant_coursework_count: 5
-                },
-                institute: {
-                    institute_tier: f.institute_tier.value,
-                    historic_placement_rate_3m: 0.55, historic_placement_rate_6m: 0.75,
-                    historic_placement_rate_12m: 0.90, historic_avg_salary: 500000,
-                    placement_cell_activity_level: 0.7, recruiter_participation_score: 0.65
-                },
-                labor_market: {
-                    field_job_demand_score: 0.7, region_job_density: 0.6,
-                    sector_hiring_trend: 'IT', sector_hiring_growth: 0.15,
-                    macroeconomic_condition_score: 0.75
-                },
-                real_time_signals: {
-                    job_portal_applications_count: 15, interview_pipeline_stage: 2,
-                    resume_updates_count: 3, skill_up_events_count: 2, institute_placement_progress: 0.6
-                }
-            };
-
-            try {
-                const response = await authFetch('/api/v1/predict', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                hidePredictModal();
-                loadDashboard();
-                // Switch to predict page and show details
-                viewStudent(result.student_id);
-            } catch (err) {
-                alert('Prediction failed: ' + err.message);
-            }
-        });
+        // --- Data Loading ---
 
         async function loadDashboard() {
             try {
@@ -998,15 +791,13 @@
                 document.getElementById('health-score').textContent = healthPct + '%';
                 document.getElementById('health-indicator').style.left = healthPct + '%';
 
-                // --- Trend Chart Logic ---
+                // Trend Chart
                 try {
                     const trendRes = await authFetch('/api/v1/portfolio/trends');
                     const trendData = await trendRes.json();
-                    
                     if (trendData.length > 0) {
                         const ctxTrend = document.getElementById('chart-health-trend').getContext('2d');
                         if (charts.healthTrend) charts.healthTrend.destroy();
-                        
                         charts.healthTrend = new Chart(ctxTrend, {
                             type: 'line',
                             data: {
@@ -1014,24 +805,18 @@
                                 datasets: [{
                                     label: 'Health Score',
                                     data: trendData.map(d => d.health_score),
-                                    borderColor: '#4f46e5',
-                                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                                    fill: true,
-                                    tension: 0.4
+                                    borderColor: '#4f46e5', backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                                    fill: true, tension: 0.4
                                 }]
                             },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    y: { min: 0, max: 1, ticks: { callback: v => (v * 100) + '%' } }
-                                }
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                                scales: { y: { min: 0, max: 1, ticks: { callback: v => (v * 100) + '%' } } }
                             }
                         });
                     }
                 } catch (err) { console.error("Trend error:", err); }
 
+                // Risk Distribution
                 if (charts.riskDist) charts.riskDist.destroy();
                 charts.riskDist = new Chart(document.getElementById('chart-risk-dist').getContext('2d'), {
                     type: 'doughnut',
@@ -1039,25 +824,11 @@
                         labels: ['Low Risk', 'Medium Risk', 'High Risk'],
                         datasets: [{
                             data: [stats.risk_distribution?.Low||0, stats.risk_distribution?.Medium||0, stats.risk_distribution?.High||0],
-                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                            borderWidth: 0,
-                            hoverOffset: 15
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0, hoverOffset: 15
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '70%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    usePointStyle: true,
-                                    font: { family: 'Inter', size: 12, weight: 500 }
-                                }
-                            }
-                        }
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%',
+                        plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { family: 'Inter', size: 12, weight: 500 } } } }
                     }
                 });
 
@@ -1069,34 +840,18 @@
                 if (allStudents.length > 0) {
                     const recent = allStudents.slice(-20).reverse();
                     tbody.innerHTML = recent.map(s => {
-                        const academic = getAcademic(s);
-                        const institute = getInstitute(s);
                         const risk = getRiskAssessment(s);
-                        const salary = getSalaryPrediction(s);
-                        const placement = getPlacementPrediction(s);
                         const riskClass = (risk.risk_level || 'Low').toLowerCase();
                         return `<tr>
-                            <td>${s.student_id}</td>
-                            <td>${academic.course_type || 'N/A'}</td>
-                            <td>${academic.cgpa || 'N/A'}</td>
-                            <td>${institute.institute_tier || 'N/A'}</td>
-                            <td>${placement.predicted_timeline || 'N/A'}</td>
-                            <td>₹${((salary.expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
+                            <td>${s.student_id}</td><td>${getAcademic(s).course_type || 'N/A'}</td><td>${getAcademic(s).cgpa || 'N/A'}</td>
+                            <td>${getInstitute(s).institute_tier || 'N/A'}</td><td>${getPlacementPrediction(s).predicted_timeline || 'N/A'}</td>
+                            <td>₹${((getSalaryPrediction(s).expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
                             <td><span class="badge-risk badge-${riskClass}">${risk.risk_level || 'N/A'}</span></td>
                             <td><button class="btn btn-sm btn-outline-primary" onclick="viewStudent('${s.student_id}')">View</button></td>
                         </tr>`;
                     }).join('');
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No students in portfolio</td></tr>';
-                }
-            } catch (err) {
-                console.error('Error loading dashboard:', err);
-            }
-        }
-
-        function viewDashboard() {
-            navigateTo('dashboard');
-            loadDashboard();
+                } else { tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No students in portfolio</td></tr>'; }
+            } catch (err) { console.error('Error loading dashboard:', err); }
         }
 
         async function loadPortfolio() {
@@ -1104,44 +859,123 @@
                 const portRes = await authFetch('/api/v1/portfolio');
                 const portData = await portRes.json();
                 allStudents = portData.students || [];
-                
                 const tbody = document.getElementById('portfolio-table');
                 if (allStudents.length > 0) {
                     tbody.innerHTML = allStudents.map(s => {
-                        const academic = getAcademic(s);
-                        const institute = getInstitute(s);
                         const risk = getRiskAssessment(s);
-                        const salary = getSalaryPrediction(s);
-                        const placement = getPlacementPrediction(s);
                         const riskClass = (risk.risk_level || 'Low').toLowerCase();
                         return `<tr>
                             <td><input type="checkbox" class="stu-checkbox" value="${s.student_id}" onclick="updateBulkButtons()"></td>
-                            <td>${s.student_id}</td>
-                            <td>${academic.course_type || 'N/A'}</td>
-                            <td>${academic.cgpa || 'N/A'}</td>
-                            <td>${institute.institute_tier || 'N/A'}</td>
-                            <td>${academic.internship_count || 0}</td>
-                            <td>${placement.predicted_timeline || 'N/A'}</td>
-                            <td>₹${((salary.expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
+                            <td>${s.student_id}</td><td>${getAcademic(s).course_type || 'N/A'}</td><td>${getAcademic(s).cgpa || 'N/A'}</td>
+                            <td>${getInstitute(s).institute_tier || 'N/A'}</td><td>${getAcademic(s).internship_count || 0}</td>
+                            <td>${getPlacementPrediction(s).predicted_timeline || 'N/A'}</td>
+                            <td>₹${((getSalaryPrediction(s).expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
                             <td>${((risk.placement_risk_score || 0) * 100).toFixed(0)}%</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge-risk badge-${riskClass}">${risk.risk_level || 'N/A'}</span>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="viewStudent('${s.student_id}')"><i class="fas fa-eye"></i></button>
-                                </div>
-                            </td>
+                            <td><div class="d-flex align-items-center gap-2">
+                                <span class="badge-risk badge-${riskClass}">${risk.risk_level || 'N/A'}</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewStudent('${s.student_id}')"><i class="fas fa-eye"></i></button>
+                            </div></td>
                         </tr>`;
                     }).join('');
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No students in portfolio</td></tr>';
-                }
+                } else { tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No students in portfolio</td></tr>'; }
                 updateBulkButtons();
-            } catch (err) {
-                console.error('Error loading portfolio:', err);
-            }
+            } catch (err) { console.error('Error loading portfolio:', err); }
         }
 
-        // --- Bulk Actions Logic ---
+        // --- Model Health ---
+
+        async function loadModelHealth() {
+            try {
+                const perfRes = await authFetch('/api/v1/analytics/model-performance');
+                const perfData = await perfRes.json();
+                if (perfData && !perfData.error) {
+                    const metrics = (perfData.placement || {})['6m']?.random_forest || {};
+                    if (metrics.accuracy) {
+                        document.getElementById('health-accuracy').textContent = (metrics.accuracy * 100).toFixed(1) + '%';
+                        const ctx = document.getElementById('chart-model-perf').getContext('2d');
+                        if (charts.modelPerf) charts.modelPerf.destroy();
+                        charts.modelPerf = new Chart(ctx, {
+                            type: 'radar',
+                            data: { labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score'],
+                                datasets: [{ label: 'Placement Model (6m RF)', data: [metrics.accuracy, metrics.precision, metrics.recall, metrics.f1],
+                                    backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: 'rgba(79, 70, 229, 1)', pointBackgroundColor: 'rgba(79, 70, 229, 1)', borderWidth: 2 }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 1, ticks: { display: false }, grid: { color: 'rgba(0,0,0,0.05)' } } }, plugins: { legend: { position: 'bottom' } } }
+                        });
+                    }
+                }
+                const biasRes = await authFetch('/api/v1/analytics/bias-check');
+                const biasData = await biasRes.json();
+                if (biasData && !biasData.error) {
+                    const courseData = biasData.by_course || {};
+                    const ctxBias = document.getElementById('chart-bias-risk').getContext('2d');
+                    if (charts.biasRisk) charts.biasRisk.destroy();
+                    const labels = Object.keys(courseData);
+                    const avgRisks = labels.map(l => courseData[l].avg_risk);
+                    charts.biasRisk = new Chart(ctxBias, {
+                        type: 'bar',
+                        data: { labels: labels, datasets: [{ label: 'Average Risk Score', data: avgRisks, backgroundColor: '#4f46e5', borderRadius: 6 }] },
+                        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 1, title: { display: true, text: 'Risk Score (0-1)' } } } }
+                    });
+                    const maxDiff = avgRisks.length > 1 ? Math.max(...avgRisks) - Math.min(...avgRisks) : 0;
+                    document.getElementById('health-bias').textContent = maxDiff.toFixed(2);
+                    const summaryElem = document.getElementById('fairness-summary');
+                    if (maxDiff < 0.15) { summaryElem.className = "alert alert-success"; summaryElem.innerHTML = '<i class="fas fa-check-circle me-2"></i> <strong>Fairness Pass:</strong> Algorithmic parity is high.'; }
+                    else { summaryElem.className = "alert alert-warning"; summaryElem.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> <strong>Fairness Alert:</strong> Significant variance detected.'; }
+                }
+            } catch (err) { console.error("Error loading model health:", err); }
+        }
+
+        // --- Settings ---
+
+        async function loadSettings() {
+            try {
+                const res = await authFetch('/api/v1/settings');
+                const data = await res.json();
+                document.getElementById('settings-gemini').value = data.gemini_api_key || "";
+                document.getElementById('settings-groq').value = data.groq_api_key || "";
+                document.getElementById('settings-adzuna-id').value = data.adzuna_app_id || "";
+                document.getElementById('settings-adzuna-key').value = data.adzuna_app_key || "";
+            } catch (err) { console.error("Settings load error:", err); }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = { gemini_api_key: document.getElementById('settings-gemini').value, groq_api_key: document.getElementById('settings-groq').value, adzuna_app_id: document.getElementById('settings-adzuna-id').value, adzuna_app_key: document.getElementById('settings-adzuna-key').value };
+            try {
+                const res = await authFetch('/api/v1/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (res.ok) alert('Configuration saved successfully');
+            } catch (err) { alert('Save failed: ' + err.message); }
+        });
+
+        // --- CSV Upload ---
+
+        function showUploadModal() { document.getElementById('upload-modal').style.display = 'flex'; }
+        function hideUploadModal() { document.getElementById('upload-modal').style.display = 'none'; document.getElementById('upload-progress').style.display = 'none'; document.getElementById('upload-form').style.display = 'block'; }
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('csv-file');
+            if (fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            document.getElementById('upload-form').style.display = 'none';
+            document.getElementById('upload-progress').style.display = 'block';
+            try {
+                const res = await authFetch('/api/v1/portfolio/upload', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (res.ok) { alert(result.message); hideUploadModal(); loadPortfolio(); }
+                else { throw new Error(result.detail || 'Upload failed'); }
+            } catch (err) { alert('Upload Error: ' + err.message); document.getElementById('upload-form').style.display = 'block'; document.getElementById('upload-progress').style.display = 'none'; }
+        });
+
+        function downloadTemplate() {
+            const csv = 'student_id,course_type,cgpa,internship_count,internship_duration,certifications,coursework,institute_tier,placement_rate_3m,avg_salary,job_demand\nSTU_SAMPLE_1,Engineering,8.5,2,4,3,6,Tier-1,0.65,600000,0.85\nSTU_SAMPLE_2,MBA,7.2,1,2,1,8,Tier-2,0.45,500000,0.65';
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Student_Import_Template.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        // --- Bulk Actions ---
 
         function toggleSelectAll() {
             const master = document.getElementById('select-all');
@@ -1156,430 +990,190 @@
             document.getElementById('btn-bulk-reports').style.display = display;
         }
 
-        function getSelectedIds() {
-            return Array.from(document.querySelectorAll('.stu-checkbox:checked')).map(cb => cb.value);
-        }
+        function getSelectedIds() { return Array.from(document.querySelectorAll('.stu-checkbox:checked')).map(cb => cb.value); }
 
         async function bulkDelete() {
             const ids = getSelectedIds();
-            if (!confirm(`Are you sure you want to delete ${ids.length} records? This cannot be undone.`)) return;
-            
+            if (!confirm(`Are you sure you want to delete ${ids.length} records?`)) return;
             try {
-                const res = await authFetch('/api/v1/portfolio/bulk', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(ids)
-                });
-                if (res.ok) {
-                    alert('Records deleted successfully');
-                    loadPortfolio();
-                }
+                const res = await authFetch('/api/v1/portfolio/bulk', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ids) });
+                if (res.ok) { alert('Records deleted'); loadPortfolio(); }
             } catch (err) { alert('Delete failed: ' + err.message); }
         }
 
         async function bulkDownloadReports() {
             const ids = getSelectedIds();
             try {
-                const res = await authFetch('/api/v1/portfolio/bulk/reports', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(ids)
-                });
+                const res = await authFetch('/api/v1/portfolio/bulk/reports', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ids) });
                 if (res.ok) {
                     const blob = await res.blob();
                     const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `BulkRiskReports_${new Date().getTime()}.zip`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
+                    const a = document.createElement('a'); a.href = url; a.download = `BulkReports.zip`; document.body.appendChild(a); a.click(); window.URL.revokeObjectURL(url);
                 }
             } catch (err) { alert('Download failed: ' + err.message); }
         }
 
-        async function exportCSV() {
-            if (allStudents.length === 0) {
-                // Try to reload if empty
-                const res = await authFetch('/api/v1/portfolio');
-                const data = await res.json();
-                allStudents = data.students || [];
-            }
+        // --- Helpers ---
 
-            if (allStudents.length === 0) {
-                alert('No data to export. Please run some predictions or batch analysis first.');
-                return;
-            }
-            
-            const headers = ['Student ID', 'Course', 'CGPA', 'Tier', 'Internships', 'Timeline', 'Salary', 'Risk Level', 'Risk Score'];
-            const rows = allStudents.map(s => {
-                const academic = getAcademic(s);
-                const institute = getInstitute(s);
-                const risk = getRiskAssessment(s);
-                const salary = getSalaryPrediction(s);
-                const placement = getPlacementPrediction(s);
-                return [
-                    s.student_id,
-                    academic.course_type || '',
-                    academic.cgpa || '',
-                    institute.institute_tier || '',
-                    academic.internship_count || 0,
-                    placement.predicted_timeline || '',
-                    salary.expected_salary_avg || '',
-                    risk.risk_level || '',
-                    risk.placement_risk_score || ''
-                ].join(',');
-            });
+        function getAcademic(s) { return s.academic || {}; }
+        function getInstitute(s) { return s.institute || {}; }
+        function getPrediction(s) { return s.prediction || s; }
+        function getRiskAssessment(s) { return getPrediction(s).risk_assessment || {}; }
+        function getSalaryPrediction(s) { return getPrediction(s).salary_prediction || {}; }
+        function getPlacementPrediction(s) { return getPrediction(s).placement_prediction || {}; }
 
-            const csvContent = [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `PlacementRisk_Export_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        function viewStudent(id) {
+            const student = allStudents.find(s => s.student_id == id);
+            if (!student) { alert('Student data not found.'); return; }
+            navigateTo('predict');
+            setTimeout(() => { displayPrediction(student.prediction || student); document.getElementById('prediction-result').scrollIntoView({ behavior: 'smooth' }); }, 50);
         }
 
-        function exportPortfolio() {
-            // Re-uses the CSV export logic but can be extended for PDF in the future
-            exportCSV();
-        }
-
-        async function loadAnalytics() {
-            try {
-                const courseRes = await authFetch('/api/v1/analytics/risk-by-course');
-                const courseData = await courseRes.json();
-                
-                if (courseData && Object.keys(courseData).length > 0 && !courseData.message) {
-                    if (charts.course) charts.course.destroy();
-                    const labels = Object.keys(courseData);
-                    charts.course = new Chart(document.getElementById('analytics-course-chart').getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                { label: 'Low', data: labels.map(l => courseData[l].Low), backgroundColor: '#10b981' },
-                                { label: 'Medium', data: labels.map(l => courseData[l].Medium), backgroundColor: '#f59e0b' },
-                                { label: 'High', data: labels.map(l => courseData[l].High), backgroundColor: '#ef4444' }
-                            ]
-                        },
-                        options: { scales: { x: { stacked: true }, y: { stacked: true } } }
-                    });
-                }
-
-                const tierRes = await authFetch('/api/v1/analytics/risk-by-tier');
-                const tierData = await tierRes.json();
-                
-                if (tierData && Object.keys(tierData).length > 0 && !tierData.message) {
-                    if (charts.tier) charts.tier.destroy();
-                    const labels = Object.keys(tierData);
-                    charts.tier = new Chart(document.getElementById('analytics-tier-chart').getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                { label: 'Low', data: labels.map(l => tierData[l].Low), backgroundColor: '#10b981' },
-                                { label: 'Medium', data: labels.map(l => tierData[l].Medium), backgroundColor: '#f59e0b' },
-                                { label: 'High', data: labels.map(l => tierData[l].High), backgroundColor: '#ef4444' }
-                            ]
-                        },
-                        options: { scales: { x: { stacked: true }, y: { stacked: true } } }
-                    });
-                }
-            } catch (err) {
-                console.error('Error loading analytics:', err);
-            }
-        }
+        function showPredictModal() { document.getElementById('predict-modal').style.display = 'flex'; }
+        function hidePredictModal() { document.getElementById('predict-modal').style.display = 'none'; }
 
         document.getElementById('prediction-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
-            const data = {
-                student_id: 'STU_' + Date.now(),
-                academic: {
-                    course_type: f.course_type.value, current_year: 4, semester: 8,
-                    cgpa: parseFloat(f.cgpa.value), academic_consistency: parseFloat(f.academic_consistency.value),
-                    internship_count: parseInt(f.internship_count.value),
-                    total_internship_duration_months: parseFloat(f.internship_duration.value),
-                    skill_certifications_count: 2, relevant_coursework_count: 5
-                },
-                institute: {
-                    institute_tier: f.institute_tier.value,
-                    historic_placement_rate_3m: parseFloat(f.placement_rate.value),
-                    historic_placement_rate_6m: 0.75, historic_placement_rate_12m: 0.90,
-                    historic_avg_salary: parseInt(f.avg_salary.value),
-                    placement_cell_activity_level: 0.7, recruiter_participation_score: 0.65
-                },
-                labor_market: {
-                    field_job_demand_score: parseFloat(f.job_demand.value),
-                    region_job_density: 0.6, sector_hiring_trend: 'IT',
-                    sector_hiring_growth: 0.15, macroeconomic_condition_score: 0.75
-                },
-                real_time_signals: {
-                    job_portal_applications_count: 15, interview_pipeline_stage: 2,
-                    resume_updates_count: 3, skill_up_events_count: 2, institute_placement_progress: 0.6
-                }
-            };
+            const data = { student_id: 'STU_' + Date.now(), academic: { course_type: f.course_type.value, current_year: 4, semester: 8, cgpa: parseFloat(f.cgpa.value), academic_consistency: parseFloat(f.academic_consistency.value), internship_count: parseInt(f.internship_count.value), total_internship_duration_months: parseFloat(f.internship_duration.value), skill_certifications_count: 2, relevant_coursework_count: 5 }, institute: { institute_tier: f.institute_tier.value, historic_placement_rate_3m: parseFloat(f.placement_rate.value), historic_avg_salary: parseInt(f.avg_salary.value) }, labor_market: { field_job_demand_score: parseFloat(f.job_demand.value) } };
+            
+            document.getElementById('prediction-result').style.display = 'none';
+            document.getElementById('prediction-skeleton').style.display = 'block';
 
             try {
-                const response = await authFetch('/api/v1/predict', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                const response = await authFetch('/api/v1/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 const result = await response.json();
+                document.getElementById('prediction-skeleton').style.display = 'none';
                 displayPrediction(result);
-            } catch (err) {
-                alert('Prediction failed: ' + err.message);
-            }
+            } catch (err) { alert('Prediction failed'); document.getElementById('prediction-skeleton').style.display = 'none'; }
         });
 
-        async function runBatchAnalysis() {
-            const count = parseInt(document.getElementById('batch-count').value);
-            document.getElementById('batch-results').style.display = 'block';
-            document.getElementById('batch-count-badge').textContent = count + ' students';
-
-            for (let i = 0; i < count; i++) {
-                const student = {
-                    student_id: 'BATCH_' + Date.now() + '_' + i,
-                    academic: {
-                        course_type: ['Engineering','MBA','Science','Commerce','Arts'][Math.floor(Math.random()*5)],
-                        current_year: 4, semester: 8,
-                        cgpa: (Math.random()*5+4.5).toFixed(1), academic_consistency: (Math.random()*0.5+0.4).toFixed(2),
-                        internship_count: Math.floor(Math.random()*4),
-                        total_internship_duration_months: Math.floor(Math.random()*6),
-                        skill_certifications_count: Math.floor(Math.random()*5),
-                        relevant_coursework_count: Math.floor(Math.random()*8)+2
-                    },
-                    institute: {
-                        institute_tier: ['Tier-1','Tier-2','Tier-3'][Math.floor(Math.random()*3)],
-                        historic_placement_rate_3m: (Math.random()*0.6+0.2).toFixed(2),
-                        historic_placement_rate_6m: 0.75, historic_placement_rate_12m: 0.90,
-                        historic_avg_salary: Math.floor(Math.random()*600000+300000),
-                        placement_cell_activity_level: (Math.random()*0.5+0.4).toFixed(2),
-                        recruiter_participation_score: (Math.random()*0.5+0.4).toFixed(2)
-                    },
-                    labor_market: {
-                        field_job_demand_score: (Math.random()*0.6+0.3).toFixed(2),
-                        region_job_density: (Math.random()*0.5+0.4).toFixed(2),
-                        sector_hiring_trend: ['IT','BFSI','Manufacturing','Healthcare'][Math.floor(Math.random()*4)],
-                        sector_hiring_growth: (Math.random()*0.3-0.1).toFixed(2),
-                        macroeconomic_condition_score: (Math.random()*0.4+0.6).toFixed(2)
-                    },
-                    real_time_signals: {
-                        job_portal_applications_count: Math.floor(Math.random()*30),
-                        interview_pipeline_stage: Math.floor(Math.random()*5),
-                        resume_updates_count: Math.floor(Math.random()*5),
-                        skill_up_events_count: Math.floor(Math.random()*5),
-                        institute_placement_progress: (Math.random()*0.6+0.2).toFixed(2)
-                    }
-                };
-
-                try {
-                    await authFetch('/api/v1/predict', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(student)
-                    });
-                } catch (err) { console.error(err); }
-            }
-
-            loadPortfolio();
-            alert('Batch analysis complete! Check Portfolio tab to see results.');
-        }
-
-        // --- SHAP Chart Logic ---
-
-        function renderShapChart(scores) {
-            console.log("Rendering SHAP Chart with data:", scores);
-            if (!scores || Object.keys(scores).length === 0) {
-                console.warn("No SHAP scores to render");
-                return;
-            }
-            
-            // Small delay to ensure DOM is ready and element is visible
-            setTimeout(() => {
-                const canvas = document.getElementById('shap-chart');
-                if (!canvas) {
-                    console.error("SHAP chart canvas not found");
-                    return;
-                }
-                const ctx = canvas.getContext('2d');
-                
-                if (charts.shap) charts.shap.destroy();
-                
-                const sortedEntries = Object.entries(scores).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
-                const labels = sortedEntries.map(e => e[0].replace(/_/g, ' '));
-                const values = sortedEntries.map(e => e[1]);
-                
-                charts.shap = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Impact on Placement Probability',
-                            data: values,
-                            backgroundColor: values.map(v => v > 0 ? '#10b981' : '#ef4444'),
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return (context.raw > 0 ? '+' : '') + (context.raw * 100).toFixed(2) + '% impact';
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: { drawBorder: false },
-                                title: { display: true, text: 'Contribution Score' }
-                            }
-                        }
-                    }
-                });
-            }, 100);
-        }
-
-        function displaySimulation(result) {
-            document.getElementById('sim-empty-state').style.display = 'none';
-            document.getElementById('simulation-comparison').style.display = 'block';
-            
-            const original = result.original_prediction;
-            const simulated = result.simulated_prediction;
-            
-            const renderProfile = (pred) => {
-                const risk = pred.risk_assessment;
-                const placement = pred.placement_prediction;
-                const riskClass = (risk.risk_level || 'Low').toLowerCase();
-                return `
-                    <div class="mb-3 text-center">
-                        <span class="badge-risk badge-${riskClass}">${risk.risk_level}</span>
-                        <h2 class="mt-2">${(risk.placement_risk_score * 100).toFixed(1)}%</h2>
-                        <small class="text-muted">Risk Score</small>
-                    </div>
-                    <hr>
-                    <p><strong>Timeline:</strong> ${placement.predicted_timeline}</p>
-                    <p><strong>6m Prob:</strong> ${(placement.probability_6_months * 100).toFixed(1)}%</p>
-                    <p><strong>Salary:</strong> ₹${(pred.salary_prediction.expected_salary_avg / 100000).toFixed(2)}L</p>
-                `;
-            };
-            
-            document.getElementById('sim-original-content').innerHTML = renderProfile(original);
-            document.getElementById('sim-modified-content').innerHTML = renderProfile(simulated);
-            
-            document.getElementById('sim-impact-summary').textContent = result.impact_summary;
-            
-            const deltaRisk = result.delta_risk_score;
-            const riskElem = document.getElementById('sim-delta-risk');
-            riskElem.textContent = (deltaRisk > 0 ? '+' : '') + (deltaRisk * 100).toFixed(1) + '%';
-            riskElem.className = deltaRisk > 0 ? 'text-danger fw-bold' : 'text-success fw-bold';
-            
-            const deltaProb = result.delta_placement_probability_6m;
-            const probElem = document.getElementById('sim-delta-prob');
-            probElem.textContent = (deltaProb > 0 ? '+' : '') + (deltaProb * 100).toFixed(1) + '%';
-            probElem.className = deltaProb > 0 ? 'text-success fw-bold' : 'text-danger fw-bold';
-        }
+        document.getElementById('quick-predict-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            const data = { student_id: f.student_id.value || 'STU_' + Date.now(), academic: { course_type: f.course_type.value, current_year: 4, semester: 8, cgpa: parseFloat(f.cgpa.value), internship_count: parseInt(f.internship_count.value) }, institute: { institute_tier: f.institute_tier.value }, labor_market: { field_job_demand_score: 0.7 } };
+            try {
+                const res = await authFetch('/api/v1/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (res.ok) { hidePredictModal(); loadDashboard(); navigateTo('portfolio'); }
+            } catch (err) { alert('Prediction failed'); }
+        });
 
         async function downloadReport(studentId) {
-            console.log("Downloading report for student:", studentId);
             try {
-                const response = await authFetch(`/api/v1/portfolio/${studentId}/report`);
-                if (!response.ok) {
-                    throw new Error('Failed to generate report');
-                }
-                
-                const blob = await response.blob();
+                const res = await authFetch(`/api/v1/portfolio/${studentId}/report`);
+                if (!res.ok) throw new Error();
+                const blob = await res.blob();
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `RiskReport_${studentId}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (err) {
-                console.error("Download error:", err);
-                alert("Could not download report: " + err.message);
-            }
+                const a = document.createElement('a'); a.href = url; a.download = `RiskReport_${studentId}.pdf`; document.body.appendChild(a); a.click();
+            } catch (err) { alert("Download failed"); }
         }
 
         function displayPrediction(result) {
             const div = document.getElementById('prediction-result');
             const content = document.getElementById('prediction-result-content');
             div.style.display = 'block';
-
             const risk = result.risk_assessment || {};
             const salary = result.salary_prediction || {};
             const placement = result.placement_prediction || {};
             const recs = result.recommendations || {};
-            const riskClass = (risk.risk_level || 'Low').toLowerCase();
-            
             const isAI = recs.is_ai_generated;
 
             content.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0">Risk Profile Analysis</h5>
-                    <button class="btn btn-sm btn-outline-primary" onclick="downloadReport('${result.student_id}')">
-                        <i class="fas fa-file-pdf me-1"></i> Download PDF Report
-                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="downloadReport('${result.student_id}')"><i class="fas fa-file-pdf"></i> PDF</button>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <h6>Placement Prediction</h6>
-                        <p><strong>Timeline:</strong> ${placement.predicted_timeline || 'N/A'}</p>
-                        <div class="progress-bar-custom mb-2">
-                            <div class="progress-bar-fill" style="width: ${(placement.probability_3_months||0)*100}%; background: #10b981;"></div>
-                        </div>
-                        <small>3-Month: ${((placement.probability_3_months||0)*100).toFixed(0)}%</small>
-                        <div class="progress-bar-custom mb-2 mt-2">
-                            <div class="progress-bar-fill" style="width: ${(placement.probability_6_months||0)*100}%; background: #3b82f6;"></div>
-                        </div>
+                        <h6>Placement Probability</h6>
+                        <p>Timeline: ${placement.predicted_timeline}</p>
+                        <div class="progress-bar-custom"><div class="progress-bar-fill" style="width:${(placement.probability_6_months||0)*100}%; background:#4f46e5;"></div></div>
                         <small>6-Month: ${((placement.probability_6_months||0)*100).toFixed(0)}%</small>
                     </div>
                     <div class="col-md-6">
                         <h6>Salary & Risk</h6>
-                        <p><strong>Expected Salary:</strong> ₹${((salary.expected_salary_avg||0)/100000).toFixed(2)} Lakhs</p>
-                        <p><strong>Risk Level:</strong> <span class="badge-risk badge-${riskClass}">${risk.risk_level || 'N/A'}</span></p>
-                        <p><strong>Risk Score:</strong> ${((risk.placement_risk_score||0)*100).toFixed(0)}%</p>
+                        <p>Salary: ₹${((salary.expected_salary_avg||0)/100000).toFixed(2)}L</p>
+                        <p>Risk: <span class="badge-risk badge-${(risk.risk_level||'Low').toLowerCase()}">${risk.risk_level}</span></p>
                     </div>
                 </div>
-
-                <div class="mt-4 card ${isAI ? 'border-primary' : 'bg-light'}" style="${isAI ? 'background: #f0f7ff;' : ''}">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0"><i class="fas ${isAI ? 'fa-robot text-primary' : 'fa-lightbulb'} me-2"></i> ${isAI ? 'AI Personalized Career Roadmap' : 'Recommendations'}</h6>
-                            ${isAI ? '<span class="badge bg-primary" style="font-size: 10px;">GENERATED BY GEMINI AI</span>' : ''}
-                        </div>
-                        <p class="mb-3"><strong>Summary:</strong> ${recs.summary || ''}</p>
-                        <div>
-                            <strong>Action Plan:</strong>
-                            <ul class="mt-2">
-                                ${(recs.next_best_actions||[]).map(a => `<li class="mb-2">${a}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                ${risk.risk_factors ? `<div class="mt-3 small text-muted"><strong>Key Risk Drivers:</strong> ${risk.risk_factors.join(' • ')}</div>` : ''}
+                <div class="mt-4 card ${isAI ? 'ai-card' : 'bg-light'}"><div class="card-body">
+                    <h6 class="mb-2"><i class="fas fa-robot"></i> AI Roadmap</h6>
+                    <p class="small mb-3">${recs.summary}</p>
+                    <ul class="small">${(recs.next_best_actions||[]).map(a => `<li>${a}</li>`).join('')}</ul>
+                </div></div>
             `;
-
-            if (result.explainability_scores) {
-                renderShapChart(result.explainability_scores);
-            }
+            if (result.explainability_scores) renderShapChart(result.explainability_scores);
         }
 
-        window.addEventListener('load', () => {
-            checkAuth();
-        });
+        function renderShapChart(scores) {
+            setTimeout(() => {
+                const ctx = document.getElementById('shap-chart').getContext('2d');
+                if (charts.shap) charts.shap.destroy();
+                const sorted = Object.entries(scores).sort((a,b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0,10);
+                charts.shap = new Chart(ctx, { type:'bar', data: { labels: sorted.map(e=>e[0]), datasets: [{ data: sorted.map(e=>e[1]), backgroundColor: sorted.map(e=>e[1]>0?'#10b981':'#ef4444') }] }, options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} } });
+            }, 100);
+        }
+
+        async function exportPortfolio() {
+            const res = await authFetch('/api/v1/portfolio');
+            const data = await res.json();
+            const csv = 'Student ID,Course,CGPA,Timeline,Salary,Risk\n' + data.students.map(s => `${s.student_id},${getAcademic(s).course_type},${getAcademic(s).cgpa},${getPlacementPrediction(s).predicted_timeline},${getSalaryPrediction(s).expected_salary_avg},${getRiskAssessment(s).risk_level}`).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'Portfolio.csv'; a.click();
+        }
+        
+        function setQuickFilter(f) {
+            const searchInput = document.getElementById('search-students');
+            const riskSelect = document.getElementById('filter-risk');
+            
+            searchInput.value = "";
+            riskSelect.value = "";
+            
+            if (f === 'high-default') {
+                riskSelect.value = "High";
+            } else if (f === 'top-performers') {
+                riskSelect.value = "Low";
+                searchInput.value = "Engineering"; // Sample logic for top domain
+            }
+            
+            filterPortfolio();
+        }
+
+        function filterPortfolio() {
+            const search = document.getElementById('search-students').value.toLowerCase();
+            const riskFilter = document.getElementById('filter-risk').value;
+            
+            const filtered = allStudents.filter(s => {
+                const academic = getAcademic(s);
+                const risk = getRiskAssessment(s);
+                const id = (s.student_id || '').toLowerCase();
+                const course = (academic.course_type || '').toLowerCase();
+                const matchesSearch = id.includes(search) || course.includes(search);
+                const matchesRisk = !riskFilter || (risk.risk_level === riskFilter);
+                return matchesSearch && matchesRisk;
+            });
+            
+            const tbody = document.getElementById('portfolio-table');
+            tbody.innerHTML = filtered.map(s => {
+                const risk = getRiskAssessment(s);
+                const riskClass = (risk.risk_level || 'Low').toLowerCase();
+                return `<tr>
+                    <td><input type="checkbox" class="stu-checkbox" value="${s.student_id}" onclick="updateBulkButtons()"></td>
+                    <td>${s.student_id}</td><td>${getAcademic(s).course_type || 'N/A'}</td><td>${getAcademic(s).cgpa || 'N/A'}</td>
+                    <td>${getInstitute(s).institute_tier || 'N/A'}</td><td>${getAcademic(s).internship_count || 0}</td>
+                    <td>${getPlacementPrediction(s).predicted_timeline || 'N/A'}</td>
+                    <td>₹${((getSalaryPrediction(s).expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
+                    <td>${((risk.placement_risk_score || 0) * 100).toFixed(0)}%</td>
+                    <td><div class="d-flex align-items-center gap-2">
+                        <span class="badge-risk badge-${riskClass}">${risk.risk_level || 'N/A'}</span>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewStudent('${s.student_id}')"><i class="fas fa-eye"></i></button>
+                    </div></td>
+                </tr>`;
+            }).join('');
+        }
+
+        window.addEventListener('load', () => { checkAuth(); });
     </script>
 </body>
 </html>
