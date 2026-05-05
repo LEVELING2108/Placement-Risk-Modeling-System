@@ -621,13 +621,13 @@
                         <div class="col-md-4">
                             <div class="card border-1"><div class="card-body text-center">
                                 <i class="fas fa-file-excel fa-3x text-success mb-3"></i><h5>Student Data Export</h5><p class="text-muted">Export all student data</p>
-                                <button class="btn-primary-custom" onclick="exportPortfolio()">Export CSV</button>
+                                <button class="btn-primary-custom" onclick="exportCSV()">Export CSV</button>
                             </div></div>
                         </div>
                         <div class="col-md-4">
                             <div class="card border-1"><div class="card-body text-center">
                                 <i class="fas fa-chart-pie fa-3x text-primary mb-3"></i><h5>Summary Statistics</h5><p class="text-muted">Overview of key metrics</p>
-                                <button class="btn-primary-custom" onclick="navigateTo('dashboard')">View</button>
+                                <button class="btn-primary-custom" onclick="viewDashboard()">View</button>
                             </div></div>
                         </div>
                     </div>
@@ -637,7 +637,7 @@
     </div>
 
     <!-- Modals -->
-    <div class="modal-overlay" id="predict-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+    <div class="modal-overlay" id="predict-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:12px; width:90%; max-width:700px; max-height:90vh; overflow-y:auto;">
             <div style="padding:20px 25px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;"><h5 style="margin:0">Quick Prediction</h5><button onclick="hidePredictModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button></div>
             <div style="padding:25px;">
@@ -777,188 +777,6 @@
 
         // --- Data Loading ---
 
-        // --- Simulator Logic ---
-        
-        async function loadSimulator() {
-            console.log("Loading simulator data...");
-            const res = await authFetch('/api/v1/portfolio');
-            const data = await res.json();
-            allStudents = data.students || [];
-            
-            const selector = document.getElementById('sim-student-selector');
-            selector.innerHTML = '<option value="">-- Select a Student --</option>' + 
-                allStudents.map(s => `<option value="${s.student_id}">${s.student_id} (${getAcademic(s).course_type || 'N/A'})</option>`).join('');
-        }
-
-        function loadStudentToSim() {
-            const studentId = document.getElementById('sim-student-selector').value;
-            if (!studentId) return;
-            
-            const student = allStudents.find(s => s.student_id == studentId);
-            if (!student) return;
-            
-            const academic = getAcademic(student);
-            const signals = student.real_time_signals || {};
-            
-            document.getElementById('sim-cgpa').value = academic.cgpa || 7.0;
-            document.getElementById('sim-cgpa').nextElementSibling.value = academic.cgpa || 7.0;
-            document.getElementById('sim-internships').value = academic.internship_count || 0;
-            document.getElementById('sim-certs').value = academic.skill_certifications_count || 0;
-            document.getElementById('sim-apps').value = signals.job_portal_applications_count || 0;
-            
-            document.getElementById('simulation-comparison').style.display = 'none';
-            document.getElementById('sim-empty-state').style.display = 'block';
-        }
-
-        document.getElementById('simulator-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const studentId = document.getElementById('sim-student-selector').value;
-            if (!studentId) {
-                alert('Please select a student first');
-                return;
-            }
-            
-            const student = allStudents.find(s => s.student_id == studentId);
-            
-            const baseData = {
-                student_id: student.student_id,
-                academic: getAcademic(student),
-                institute: getInstitute(student),
-                labor_market: student.labor_market || {},
-                real_time_signals: student.real_time_signals || {}
-            };
-            
-            const modifications = {
-                'academic.cgpa': parseFloat(document.getElementById('sim-cgpa').value),
-                'academic.internship_count': parseInt(document.getElementById('sim-internships').value),
-                'academic.skill_certifications_count': parseInt(document.getElementById('sim-certs').value),
-                'real_time_signals.job_portal_applications_count': parseInt(document.getElementById('sim-apps').value)
-            };
-            
-            try {
-                const response = await authFetch('/api/v1/simulate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ base_data: baseData, modifications: modifications })
-                });
-                const result = await response.json();
-                displaySimulation(result);
-            } catch (err) {
-                alert('Simulation failed: ' + err.message);
-            }
-        });
-
-        function displaySimulation(result) {
-            document.getElementById('sim-empty-state').style.display = 'none';
-            document.getElementById('simulation-comparison').style.display = 'block';
-
-            const orig = result.original_prediction;
-            const sim = result.simulated_prediction;
-
-            const formatRisk = (risk) => {
-                let badge = 'bg-success';
-                if (risk.risk_level === 'Medium') badge = 'bg-warning';
-                if (risk.risk_level === 'High') badge = 'bg-danger';
-                return `<div class="mb-2"><strong>Risk:</strong> <span class="badge ${badge}">${risk.risk_level}</span></div>
-                        <div class="mb-2"><strong>Score:</strong> ${(risk.placement_risk_score * 100).toFixed(1)}%</div>
-                        <div class="mb-2"><strong>Timeline:</strong> ${orig.placement_prediction.predicted_timeline}</div>`;
-            };
-
-            const formatRiskSim = (risk) => {
-                let badge = 'bg-success';
-                if (risk.risk_level === 'Medium') badge = 'bg-warning';
-                if (risk.risk_level === 'High') badge = 'bg-danger';
-                return `<div class="mb-2"><strong>Risk:</strong> <span class="badge ${badge}">${risk.risk_level}</span></div>
-                        <div class="mb-2"><strong>Score:</strong> ${(risk.placement_risk_score * 100).toFixed(1)}%</div>
-                        <div class="mb-2"><strong>Timeline:</strong> ${sim.placement_prediction.predicted_timeline}</div>`;
-            };
-
-            document.getElementById('sim-original-content').innerHTML = formatRisk(orig.risk_assessment);
-            document.getElementById('sim-modified-content').innerHTML = formatRiskSim(sim.risk_assessment);
-
-            document.getElementById('sim-impact-summary').textContent = result.impact_summary;
-            
-            const deltaRisk = result.delta_risk_score;
-            const deltaRiskEl = document.getElementById('sim-delta-risk');
-            deltaRiskEl.textContent = (deltaRisk > 0 ? '+' : '') + (deltaRisk * 100).toFixed(1) + '%';
-            deltaRiskEl.className = deltaRisk > 0 ? 'text-danger' : 'text-success';
-
-            const deltaProb = result.delta_placement_probability_6m;
-            const deltaProbEl = document.getElementById('sim-delta-prob');
-            deltaProbEl.textContent = (deltaProb > 0 ? '+' : '') + (deltaProb * 100).toFixed(1) + '%';
-            deltaProbEl.className = deltaProb > 0 ? 'text-success' : 'text-danger';
-        }
-
-        async function runBatchAnalysis() {
-            const count = parseInt(document.getElementById('batch-count').value);
-            if (isNaN(count) || count < 1) {
-                alert('Please enter a valid number of students');
-                return;
-            }
-
-            // Show loading state
-            document.getElementById('batch-results').style.display = 'none';
-            const btn = document.querySelector('button[onclick="runBatchAnalysis()"]');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
-
-            try {
-                // 1. Request sample students from the data generator service
-                // Note: We'll create a simple endpoint for this if it doesn't exist, 
-                // or use a utility function in the backend.
-                const genRes = await authFetch(`/api/v1/generate-sample-students?count=${count}`);
-                if (!genRes.ok) throw new Error('Failed to generate sample students');
-                const students = await genRes.json();
-
-                // 2. Run batch prediction
-                const res = await authFetch('/api/v1/batch-predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ students: students, max_batch_size: count })
-                });
-
-                if (!res.ok) throw new Error('Batch prediction failed');
-                const data = await res.json();
-
-                // 3. Display results
-                displayBatchResults(data.results);
-            } catch (err) {
-                alert('Batch analysis failed: ' + err.message);
-                console.error(err);
-            } finally {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            }
-        }
-
-        function displayBatchResults(results) {
-            const container = document.getElementById('batch-results');
-            const tbody = document.getElementById('batch-table');
-            const badge = document.getElementById('batch-count-badge');
-
-            tbody.innerHTML = results.map(r => {
-                const risk = r.risk_assessment || {};
-                const salary = r.salary_prediction || {};
-                const placement = r.placement_prediction || {};
-                const riskClass = (risk.risk_level || 'Low').toLowerCase();
-
-                return `<tr>
-                    <td>${r.student_id}</td>
-                    <td>${r.full_prediction?.academic?.course_type || 'N/A'}</td>
-                    <td>${r.full_prediction?.academic?.cgpa || 'N/A'}</td>
-                    <td>${placement.predicted_timeline || 'N/A'}</td>
-                    <td>₹${((salary.expected_salary_avg || 0) / 100000).toFixed(2)}L</td>
-                    <td><span class="badge-risk badge-${riskClass}">${risk.risk_level}</span></td>
-                    <td>${((risk.placement_risk_score || 0) * 100).toFixed(0)}%</td>
-                </tr>`;
-            }).join('');
-
-            badge.textContent = `${results.length} students processed`;
-            container.style.display = 'block';
-            container.scrollIntoView({ behavior: 'smooth' });
-        }
-
         async function loadDashboard() {
             try {
                 const statsRes = await authFetch('/api/v1/portfolio/stats');
@@ -1062,64 +880,6 @@
                 } else { tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No students in portfolio</td></tr>'; }
                 updateBulkButtons();
             } catch (err) { console.error('Error loading portfolio:', err); }
-        }
-
-        async function loadAnalytics() {
-            try {
-                // Course Analytics
-                const courseRes = await authFetch('/api/v1/analytics/risk-by-course');
-                const courseData = await courseRes.json();
-                
-                const courseLabels = Object.keys(courseData);
-                const courseLow = courseLabels.map(l => courseData[l].Low || 0);
-                const courseMed = courseLabels.map(l => courseData[l].Medium || 0);
-                const courseHigh = courseLabels.map(l => courseData[l].High || 0);
-
-                const ctxCourse = document.getElementById('analytics-course-chart').getContext('2d');
-                if (charts.analyticsCourse) charts.analyticsCourse.destroy();
-                charts.analyticsCourse = new Chart(ctxCourse, {
-                    type: 'bar',
-                    data: {
-                        labels: courseLabels,
-                        datasets: [
-                            { label: 'Low Risk', data: courseLow, backgroundColor: '#10b981' },
-                            { label: 'Medium Risk', data: courseMed, backgroundColor: '#f59e0b' },
-                            { label: 'High Risk', data: courseHigh, backgroundColor: '#ef4444' }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
-                    }
-                });
-
-                // Tier Analytics
-                const tierRes = await authFetch('/api/v1/analytics/risk-by-tier');
-                const tierData = await tierRes.json();
-                
-                const tierLabels = Object.keys(tierData);
-                const tierLow = tierLabels.map(l => tierData[l].Low || 0);
-                const tierMed = tierLabels.map(l => tierData[l].Medium || 0);
-                const tierHigh = tierLabels.map(l => tierData[l].High || 0);
-
-                const ctxTier = document.getElementById('analytics-tier-chart').getContext('2d');
-                if (charts.analyticsTier) charts.analyticsTier.destroy();
-                charts.analyticsTier = new Chart(ctxTier, {
-                    type: 'bar',
-                    data: {
-                        labels: tierLabels,
-                        datasets: [
-                            { label: 'Low Risk', data: tierLow, backgroundColor: '#10b981' },
-                            { label: 'Medium Risk', data: tierMed, backgroundColor: '#f59e0b' },
-                            { label: 'High Risk', data: tierHigh, backgroundColor: '#ef4444' }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
-                    }
-                });
-            } catch (err) { console.error("Analytics error:", err); }
         }
 
         // --- Model Health ---
@@ -1275,37 +1035,8 @@
         document.getElementById('prediction-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
-            const data = { 
-                student_id: 'STU_' + Date.now(), 
-                academic: { 
-                    course_type: f.course_type.value, 
-                    current_year: 4, 
-                    semester: 8, 
-                    cgpa: parseFloat(f.cgpa.value), 
-                    academic_consistency: parseFloat(f.academic_consistency.value), 
-                    internship_count: parseInt(f.internship_count.value), 
-                    total_internship_duration_months: parseFloat(f.internship_duration.value), 
-                    skill_certifications_count: 2, 
-                    relevant_coursework_count: 5 
-                }, 
-                institute: { 
-                    institute_tier: f.institute_tier.value, 
-                    historic_placement_rate_3m: parseFloat(f.placement_rate.value), 
-                    historic_placement_rate_6m: Math.min(1.0, parseFloat(f.placement_rate.value) + 0.2),
-                    historic_placement_rate_12m: Math.min(1.0, parseFloat(f.placement_rate.value) + 0.4),
-                    historic_avg_salary: parseInt(f.avg_salary.value),
-                    placement_cell_activity_level: 0.7,
-                    recruiter_participation_score: 0.7
-                }, 
-                labor_market: { 
-                    field_job_demand_score: parseFloat(f.job_demand.value),
-                    region_job_density: 0.6,
-                    sector_hiring_trend: 'IT',
-                    sector_hiring_growth: 0.05,
-                    macroeconomic_condition_score: 0.7
-                } 
-            };
-
+            const data = { student_id: 'STU_' + Date.now(), academic: { course_type: f.course_type.value, current_year: 4, semester: 8, cgpa: parseFloat(f.cgpa.value), academic_consistency: parseFloat(f.academic_consistency.value), internship_count: parseInt(f.internship_count.value), total_internship_duration_months: parseFloat(f.internship_duration.value), skill_certifications_count: 2, relevant_coursework_count: 5 }, institute: { institute_tier: f.institute_tier.value, historic_placement_rate_3m: parseFloat(f.placement_rate.value), historic_avg_salary: parseInt(f.avg_salary.value) }, labor_market: { field_job_demand_score: parseFloat(f.job_demand.value) } };
+            
             document.getElementById('prediction-result').style.display = 'none';
             document.getElementById('prediction-skeleton').style.display = 'block';
 
@@ -1313,74 +1044,18 @@
                 const response = await authFetch('/api/v1/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 const result = await response.json();
                 document.getElementById('prediction-skeleton').style.display = 'none';
-
-                if (response.ok) {
-                    displayPrediction(result);
-                } else {
-                    console.error("Prediction Error Response:", result);
-                    let msg = result.detail;
-                    if (Array.isArray(msg)) msg = msg.map(e => `${e.loc.join('.')}: ${e.msg}`).join('\n');
-                    else if (typeof msg === 'object') msg = JSON.stringify(msg, null, 2);
-                    alert('Prediction failed:\n' + (msg || 'Unknown error'));
-                }
-            } catch (err) { 
-                console.error("Network or Client Error:", err);
-                alert('Prediction failed: ' + err.message); 
-                document.getElementById('prediction-skeleton').style.display = 'none'; 
-            }
+                displayPrediction(result);
+            } catch (err) { alert('Prediction failed'); document.getElementById('prediction-skeleton').style.display = 'none'; }
         });
 
         document.getElementById('quick-predict-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = e.target;
-            
-            const getVal = (name, def) => {
-                const val = parseFloat(f[name].value);
-                return isNaN(val) ? def : val;
-            };
-
-            const data = { 
-                student_id: f.student_id.value || 'STU_' + Date.now(), 
-                academic: { 
-                    course_type: f.course_type.value || 'Engineering', 
-                    current_year: 4, 
-                    semester: 8, 
-                    cgpa: getVal('cgpa', 7.5), 
-                    internship_count: parseInt(f.internship_count.value) || 0,
-                    academic_consistency: 0.8,
-                    total_internship_duration_months: 3.0,
-                    skill_certifications_count: 2,
-                    relevant_coursework_count: 5
-                }, 
-                institute: { 
-                    institute_tier: f.institute_tier.value || 'Tier-2',
-                    historic_placement_rate_3m: 0.6,
-                    historic_placement_rate_6m: 0.8,
-                    historic_placement_rate_12m: 0.95,
-                    historic_avg_salary: 500000,
-                    placement_cell_activity_level: 0.7,
-                    recruiter_participation_score: 0.7
-                }, 
-                labor_market: { 
-                    field_job_demand_score: 0.7,
-                    region_job_density: 0.6,
-                    sector_hiring_trend: 'IT',
-                    sector_hiring_growth: 0.05,
-                    macroeconomic_condition_score: 0.7
-                } 
-            };
+            const data = { student_id: f.student_id.value || 'STU_' + Date.now(), academic: { course_type: f.course_type.value, current_year: 4, semester: 8, cgpa: parseFloat(f.cgpa.value), internship_count: parseInt(f.internship_count.value) }, institute: { institute_tier: f.institute_tier.value }, labor_market: { field_job_demand_score: 0.7 } };
             try {
                 const res = await authFetch('/api/v1/predict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
                 if (res.ok) { hidePredictModal(); loadDashboard(); navigateTo('portfolio'); }
-                else { 
-                    const errData = await res.json();
-                    console.error("Quick Prediction Error Response:", errData);
-                    alert('Prediction failed. Please check inputs.'); 
-                }
-            } catch (err) { 
-                console.error("Quick Prediction Network Error:", err);
-                alert('Connection error.'); 
-            }
+            } catch (err) { alert('Prediction failed'); }
         });
 
         async function downloadReport(studentId) {
