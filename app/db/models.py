@@ -27,7 +27,7 @@ class StudentProfile(Base):
     labor_market_data = Column(JSON)
     real_time_signals = Column(JSON)
     
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), default=func.now())
     
     predictions = relationship("PredictionResult", back_populates="student")
 
@@ -48,7 +48,7 @@ class PredictionResult(Base):
     # Full prediction JSON (for roadmaps, SHAP, etc.)
     full_prediction = Column(JSON)
     
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), default=func.now())
     
     student = relationship("StudentProfile", back_populates="predictions")
     lender = relationship("User", back_populates="predictions")
@@ -73,4 +73,4 @@ class TenantSettings(Base):
     adzuna_app_id = Column(String, nullable=True)
     adzuna_app_key = Column(String, nullable=True)
     
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), default=func.now())
